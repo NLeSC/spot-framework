@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>facet/datetime-transform.js - Documentation</title>
+
+    <script src="scripts/prettify/prettify.js"></script>
+    <script src="scripts/prettify/lang-css.js"></script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css">
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+<body>
+
+<input type="checkbox" id="nav-trigger" class="nav-trigger" />
+<label for="nav-trigger" class="navicon-button x">
+  <div class="navicon"></div>
+</label>
+
+<label for="nav-trigger" class="overlay"></label>
+
+<nav>
+    <li class="nav-link nav-home-link"><a href="index.html">Home</a></li><li class="nav-heading">Classes</li><li class="nav-heading"><span class="nav-item-type type-class">C</span><span class="nav-item-name"><a href="Aggregate.html">Aggregate</a></span></li><li class="nav-heading"><span class="nav-item-type type-class">C</span><span class="nav-item-name"><a href="Base.html">Base</a></span></li><li class="nav-heading"><span class="nav-item-type type-class">C</span><span class="nav-item-name"><a href="CategorialRule.html">CategorialRule</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="CategorialRule.html#.match">match</a></span></li><li class="nav-heading"><span class="nav-item-type type-class">C</span><span class="nav-item-name"><a href="CategorialTransform.html">CategorialTransform</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="CategorialTransform.html#..setCategories">.setCategories</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="CategorialTransform.html#.transform">transform</a></span></li><li class="nav-heading"><span class="nav-item-type type-class">C</span><span class="nav-item-name"><a href="ContinuousTransform.html">ContinuousTransform</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="ContinuousTransform.html#.inverse">inverse</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="ContinuousTransform.html#..setPercentiles">.setPercentiles</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="ContinuousTransform.html#.transform">transform</a></span></li><li class="nav-heading"><span class="nav-item-type type-class">C</span><span class="nav-item-name"><a href="ControlPoint.html">ControlPoint</a></span></li><li class="nav-heading"><span class="nav-item-type type-class">C</span><span class="nav-item-name"><a href="Dataset.html">Dataset</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="Dataset.html#.exportData">exportData</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="Dataset.html#.getAllData">getAllData</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="Dataset.html#.pause">pause</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="Dataset.html#.play">play</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="Dataset.html#.scanData">scanData</a></span></li><li class="nav-heading"><span class="nav-item-type type-class">C</span><span class="nav-item-name"><a href="DatetimeTransform.html">DatetimeTransform</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="DatetimeTransform.html#..setMinMax">.setMinMax</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="DatetimeTransform.html#.transform">transform</a></span></li><li class="nav-heading"><span class="nav-item-type type-class">C</span><span class="nav-item-name"><a href="DurationTransform.html">DurationTransform</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="DurationTransform.html#..setMinMax">.setMinMax</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="DurationTransform.html#.transform">transform</a></span></li><li class="nav-heading"><span class="nav-item-type type-class">C</span><span class="nav-item-name"><a href="Facet.html">Facet</a></span></li><li class="nav-heading"><span class="nav-item-type type-class">C</span><span class="nav-item-name"><a href="Filter.html">Filter</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="Filter.html#.getData">getData</a></span></li><li class="nav-heading"><span class="nav-item-type type-class">C</span><span class="nav-item-name"><a href="Group.html">Group</a></span></li><li class="nav-heading"><span class="nav-item-type type-class">C</span><span class="nav-item-name"><a href="Me.html">Me</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="Me.html#.connectToServer">connectToServer</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="Me.html#.toggleDataset">toggleDataset</a></span></li><li class="nav-heading"><span class="nav-item-type type-class">C</span><span class="nav-item-name"><a href="Partition.html">Partition</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="Partition.html#.reset">reset</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="Partition.html#.setGroups">setGroups</a></span></li><li class="nav-heading">Modules</li><li class="nav-heading"><span class="nav-item-type type-module">M</span><span class="nav-item-name"><a href="module-client_dataset-client.html">client/dataset-client</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-client_dataset-client.html#~initDataFilter">initDataFilter</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-client_dataset-client.html#~releaseDataFilter">releaseDataFilter</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-client_dataset-client.html#~sampleDataset">sampleDataset</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-client_dataset-client.html#~scanData">scanData</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-client_dataset-client.html#~setCategories">setCategories</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-client_dataset-client.html#~setMinMax">setMinMax</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-client_dataset-client.html#~setPercentiles">setPercentiles</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-client_dataset-client.html#~updateDataFilter">updateDataFilter</a></span></li><li class="nav-heading"><span class="nav-item-type type-module">M</span><span class="nav-item-name"><a href="module-client_dataset-server.html">client/dataset-server</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-client_dataset-server.html#~initDataFilter">initDataFilter</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-client_dataset-server.html#~releaseDataFilter">releaseDataFilter</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-client_dataset-server.html#~scanData">scanData</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-client_dataset-server.html#~setCategories">setCategories</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-client_dataset-server.html#~setMinMax">setMinMax</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-client_dataset-server.html#~setPercentiles">setPercentiles</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-client_dataset-server.html#~updateDataFilter">updateDataFilter</a></span></li><li class="nav-heading"><span class="nav-item-type type-module">M</span><span class="nav-item-name"><a href="module-client_misval.html">client/misval</a></span></li><li class="nav-heading"><span class="nav-item-type type-module">M</span><span class="nav-item-name"><a href="module-client_util-crossfilter.html">client/util-crossfilter</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-client_util-crossfilter.html#~baseValueFn">baseValueFn</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-client_util-crossfilter.html#~groupFn">groupFn</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-client_util-crossfilter.html#~rawValueFn">rawValueFn</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-client_util-crossfilter.html#~reduceFn">reduceFn</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-client_util-crossfilter.html#~valueFn">valueFn</a></span></li><li class="nav-heading"><span class="nav-item-type type-module">M</span><span class="nav-item-name"><a href="module-client_util-selection.html">client/util-selection</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-client_util-selection.html#~updateSelection">updateSelection</a></span></li><li class="nav-heading"><a href="global.html">Globals</a></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#connectToServer">connectToServer</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#initDataFilter">initDataFilter</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#releaseDataFilter">releaseDataFilter</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#setCategories">setCategories</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#setMinMax">setMinMax</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#setPercentiles">setPercentiles</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#updateDataFilter">updateDataFilter</a></span></li>
+</nav>
+
+<div id="main">
+    
+    <h1 class="page-title">facet/datetime-transform.js</h1>
+    
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/**
+ * DatetimeTransform defines a transformation on time or dates with timezones
+ *
+ * @class DatetimeTransform
+ */
+var AmpersandModel = require('ampersand-model');
+var moment = require('moment-timezone');
+var util = require('../util/time');
+var misval = require('../util/misval');
+
+/**
+ * setMinMax finds the range of a continuous facet,
+ *
+ * @name setMinMax
+ * @memberof! DatetimeTransform
+ * @virtual
+ * @function
+ */
+
+module.exports = AmpersandModel.extend({
+  props: {
+    /**
+     * Timezone to use when parsing, for when timezone information is absent or incorrect.
+     * @memberof! DatetimeTransform
+     * @type {string}
+     */
+    zone: ['string', true, 'ISO8601'],
+
+    /**
+     * Format indentifier to use when parsing, when not in ISO8601 format
+     * Mappings are defined in util/time.js => timeParts.description
+     * @memberof! DatetimeTransform
+     * @type {string}
+     */
+    format: ['string', true, 'ISO8601'],
+
+    /**
+     * Reformats to a string using the momentjs or postgreSQL format specifiers.
+     * This allows a transformation to day of the year, or day of week etc.
+     * @memberof! DatetimeTransform
+     * @type {string}
+     */
+    transformedFormat: ['string', true, 'ISO8601'],
+
+    /**
+     * Controls conversion to duration by subtracting this date
+     * @memberof! DatetimeTransform
+     * @type {string}
+     */
+    transformedReference: 'string',
+
+    /**
+     * Reference timezone for conversion from datetime to duration
+     * @memberof! DatetimeTransform
+     * @type {string}
+     */
+    transformedZone: ['string', true, 'ISO8601']
+
+  },
+  derived: {
+    // reference momentjs for duration &lt;-> datetime conversion
+    referenceMoment: {
+      deps: ['transformedReference', 'transformedZone'],
+      fn: function () {
+        var tz;
+        if (this.transformedZone === 'ISO8601') {
+          tz = moment.tz.guess();
+        } else {
+          var timeZone = util.timeZones.get(this.transformedZone, 'description');
+          if (timeZone &amp;&amp; timeZone.format) {
+            tz = timeZone.format;
+          } else {
+            tz = moment.tz.guess();
+          }
+        }
+        if (this.transformedReference) {
+          return moment.tz(this.transformedReference, tz);
+        }
+        return null;
+      }
+    },
+    /**
+     * The type of the facet after the transformation has been applied
+     * @memberof! DatetimeTransform
+     */
+    transformedType: {
+      deps: ['transformedFormat', 'transformedReference'],
+      fn: function () {
+        if (this.transformedReference) {
+          // datetime -> duration
+          return 'duration';
+        } else if (this.transformedFormat === 'ISO8601') {
+          // datetime -> datetime
+          return 'datetime';
+        } else {
+          // datetime -> time part
+          var timePart = util.timeParts.get(this.transformedFormat, 'description');
+          if (timePart &amp;&amp; timePart.type) {
+            return timePart.type;
+          }
+        }
+        return 'datetime';
+      },
+      cache: false
+    },
+    /**
+     * The minium value this facet can take, after the transformation has been applied
+     * @type {number}
+     * @memberof! DatetimeTransform
+     */
+    transformedMin: {
+      deps: ['transformedType'],
+      fn: function () {
+        var timePart;
+        if (this.transformedType === 'datetime' || this.transformedType === 'duration') {
+          return this.transform(this.parent.minval);
+        }
+        timePart = util.timeParts.get(this.transformedFormat, 'description');
+        if (timePart.calcualte) {
+          return this.transform(this.parent.minval);
+        } else {
+          return timePart.min;
+        }
+      },
+      cache: false
+    },
+    /**
+     * The maximum value this facet can take, after the transformation has been applied
+     * @type {number}
+     * @memberof! DatetimeTransform
+     */
+    transformedMax: {
+      deps: ['transformedType'],
+      fn: function () {
+        var timePart;
+        if (this.transformedType === 'datetime' || this.transformedType === 'duration') {
+          return this.transform(this.parent.maxval);
+        }
+        timePart = util.timeParts.get(this.transformedFormat, 'description');
+        if (timePart.calcualte) {
+          return this.transform(this.parent.maxval);
+        } else {
+          return timePart.max;
+        }
+      },
+      cache: false
+    }
+  },
+
+  /**
+   * @function
+   * @memberof! DatetimeTransform
+   * @param {Object} momentjs
+   * @returns {Object} momentjs
+   */
+  transform: function transform (inval) {
+    if (typeof inval === 'undefined') {
+      return misval;
+    }
+
+    var d = inval.clone();
+    var timePart;
+
+    if (this.referenceMoment) {
+      // datetime -> duration
+      return moment.duration(d.diff(this.referenceMoment, 'milliseconds', true), 'milliseconds');
+    } else if (this.transformedFormat !== 'ISO8601') {
+      timePart = util.timeParts.get(this.transformedFormat, 'description');
+      if (timePart &amp;&amp; timePart.momentFormat) {
+        return d.format(timePart.momentFormat);
+      }
+      return d;
+    } else {
+      return d;
+    }
+  },
+  reset: function () {
+    this.unset(['zone', 'transformedFormat', 'transformedZone', 'transformedReference']);
+  }
+});
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<br class="clear">
+
+<footer>
+    Generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.3</a> on Fri Apr 21 2017 11:47:39 GMT+0200 (CEST) using the Minami theme.
+</footer>
+
+<script>prettyPrint();</script>
+<script src="scripts/linenumber.js"></script>
+</body>
+</html>
