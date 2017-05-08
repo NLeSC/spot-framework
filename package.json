@@ -2,11 +2,12 @@
   "name": "spot-framework",
   "license": "Apache-2.0",
   "version": "0.0.6",
-  "homepage": "https://github.com/NLeSC/spot",
-  "description": "Spot: an extensible facet browser. Easily, interactively and quickly visualize complex data.",
+  "homepage": "https://github.com/NLeSC/spot-framework",
+  "description": "Filter and join datasets for interactive visualization",
   "keywords": [
     "visualization",
     "crossfilter",
+    "postgreSQL",
     "multi-dimensional"
   ],
   "readmeFilename": "README.md",
@@ -22,10 +23,10 @@
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/jiskattema/spot-framework.git"
+    "url": "https://github.com/NLeSC/spot-framework.git"
   },
   "bugs": {
-    "url": "https://github.com/jiskattema/spot-framework/issues"
+    "url": "https://github.com/NLeSC/spot-framework/issues"
   },
   "semistandard": {
     "ignore": [
@@ -54,7 +55,7 @@
     "uglify-js": "^2.6.2"
   },
   "scripts": {
-    "uglify": "browserify client/app.js  | uglifyjs --no-source-map --screw-ie8 > dist/spot-framework.min.js",
+    "uglify": "browserify src/me.js  | uglifyjs --no-source-map --screw-ie8 > dist/spot-framework.min.js",
     "gh-pages": "npm run dist && git subtree push --prefix dist origin gh-pages",
     "check": "semistandard && jasmine",
     "doc": "jsdoc -c .jsdoc.json -d doc --package package.json --readme README.md src/ src/aggregate src/dataset src/facet src/filter src/partition src/util",
