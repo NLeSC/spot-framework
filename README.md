@@ -1,104 +1,91 @@
-# Spot - extensible facet browser
-[![Build Status](https://travis-ci.org/NLeSC/spot.svg?branch=master)](https://travis-ci.org/NLeSC/spot)
-[![Codacy Badge](https://api.codacy.com/project/badge/Grade/182235fbb0d44bb3aeeda9c67773f4be)](https://www.codacy.com/app/NLeSC/spot?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=NLeSC/spot&amp;utm_campaign=Badge_Grade)
-[![Codacy Badge](https://api.codacy.com/project/badge/Coverage/182235fbb0d44bb3aeeda9c67773f4be)](https://www.codacy.com/app/NLeSC/spot?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=NLeSC/spot&amp;utm_campaign=Badge_Coverage)
+# Spot - framework
+[![Build Status](https://travis-ci.org/NLeSC/spot-framework.svg?branch=master)](https://travis-ci.org/NLeSC/spot-framework)
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/783828d8433a49a8b33dfa3874e46f76)](https://www.codacy.com/app/NLeSC/spot-framework?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=NLeSC/spot-framework&amp;utm_campaign=Badge_Grade)
 [![js-semistandard-style](https://img.shields.io/badge/code%20style-semistandard-brightgreen.svg?style=flat-square)](https://github.com/Flet/semistandard)
 
+Group, bin, combine, and aggregate datasets for visual analytics using a single API.
+It can be used fully client side, via crossfilter, or it can use a PostgreSQL database using the `spot-server`.
 
-## How to run it
-
-As a fully stand-alone website, using crossfilter:
+## How to install
 
 1. download and install **node.js**
     - [via package manager](https://nodejs.org/en/download/package-manager) (suggested)
     - [Binaries](https://nodejs.org/en/download)
 2. clone this repository:
     ```bash
-    git clone https://github.com/NLeSC/spot.git && cd spot
+    git clone https://github.com/NLeSC/spot-framework.git && cd spot
     ```
 3. install dependencies:
     ```bash
     npm install
     ```
-4. generate page templates:
-    ```bash
-    npm run templates
-    ```
-5. start the web server
-    ```bash
-    npm start
-    ```
-6. open http://localhost:9966 in a web browser
 
-Building the website is only tested on Linux, but it should work on any OS (Mac OS X for example) that is supported by node and npm.
+## Example usage
 
-Hosting the site can be done by any webserver.
+```javascript
 
-Make sure that **Javascript is enabled** in your web browser. SPOT is fully functional in **Google Chrome** and **Chromium** web browsers and it should work in other web browsers. Otherwise, please [submit an issue](https://github.com/NLeSC/spot/issues).
+// get a new Spot instance
+var Spot = require('./src/me');
+var spot = new Spot();
 
-### SQL Database
+// add a dataset
+var dataset = spot.datasets.add({
+  name: 'My data'
+});
 
-Spot can also work with a [PostgreSQL](https://www.postgresql.org) database, but this requires either a local or a remote service to run. Commutication between the client and the database server is achieved by using [web socket](https://github.com/socketio/socket.io).
+// add some data to the dataset
+dataset.crossfilter.add([
+  { firstName: 'John', lastName: 'Smith', age: 35 },
+  { firstName: 'Mary', lastName: 'Smith', age: 49 },
+  { firstName: 'Little', lastName: 'Smith', age: 8 },
+  { firstName: 'Dee', lastName: 'Jones', age: 5 },
+  { firstName: 'Doo', lastName: 'Jones', age: 9 }
+]);
 
-In order to use SPOT with a PostreSQL server:
+// Have SPOT scan the dataset:
+// 1. it auto-detects 'firstName', 'lastName', and 'age' attributes
+// 2. it creates the corresponding Facets
+dataset.scan();
 
-1. make sure that PostreSQL service is runnning.
+// make the dataset active
+spot.toggleDataset(dataset);
 
-    - **Hint**: You may want to use [PostreSQL Docker image](https://hub.docker.com/_/postgres) for quick testing.
-    - [pg_isready](https://www.postgresql.org/docs/9.3/static/app-pg-isready.html) command might be useful to check the server status.
+var dataview = spot.dataview;
 
-2. upload your data to the database:
-    ```bash
-    node ./server/spot-import.js -c 'postgres://USER@localhost/DATABASE' \
-    -t 'data_table' \
-    -s 'session_file.json' \
-    -u 'http://URL' \
-    -d 'Dataset description' \
-    --csv -f 'test_data.csv'
-    ```
+// add a filter
+var filter = dataview.filters.add({
+  title: 'filter one'
+});
 
-    run following command to see available options:
-    ```bash
-    node server/spot-import.js --help
-    ```
+// ... that partitions the data on 'lastName'
+filter.partitions.add([
+  { facetName: 'lastName', rank: 1 }
+]);
 
-3. run the ***SPOT-server*** which allows client to connect to the PostreSQL database:
-    ```bash
-    node server/spot-server.js -c 'connection_string'
-    ```
+filter.partitions.forEach(function (partition) {
+  partition.setGroups();
+});
 
-    the **connection_string** format should be:
+// ... and that takes the average over the 'age'
+filter.aggregates.add([
+  { facetName: 'age', rank: 1, operation: 'avg' }
+]);
 
-      postgres://USER@localhost/DATABASE -s session_file.json
+// initialize the filter
+filter.initDataFilter();
 
-    run following command to see available options:
-    ```bash
-    node server/spot-server.js --help
-    ```
+// listen to data
+filter.on('newData', function () {
+  console.log('data: ', filter.data);
+});
 
-
-You can get a bit more performance using the native PostgreSQL bindings (turned off by default to make travisCI easier). Just install the pg-native package:
-    ```bash
-    npm install pg-native
-    ```
-This in only tested on linux, could work on other OSs.
-
-More information about databases can be found [here](https://github.com/NLeSC/spot/blob/master/README_SQL.md).
-
-
-## Desktop version
-
-Desktop version of SPOT is still under development. Available downloads can be found [here](https://github.com/fdiblen/spot-desktop-app/releases/tag/0.1.0-alpha.1).
-
+dataview.getData();
+```
 
 ## Documentation
 
-The spot documentation can be found [here](http://nlesc.github.io/spot/doc/spot/0.0.6/index.html).
-
+The spot documentation can be found [here](http://nlesc.github.io/spot-framework/doc/spot/0.0.6/index.html).
 
 ## Credits
 
 Jisk Attema, [the Netherlands eScience Center](http://nlesc.nl)
-
-Ampersand by folks at [&yet](http://andyet.com)
-Get the book: http://humanjavascript.com
