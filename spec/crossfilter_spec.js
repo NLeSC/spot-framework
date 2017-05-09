@@ -1,10 +1,11 @@
 /* eslint-env jasmine */
-var utildx = require('../src/util/crossfilter');
-var Facet = require('../src/facet');
-var Dataset = require('../src/dataset/client');
 var Aggregate = require('../src/aggregate');
+var Dataset = require('../src/dataset');
+var Facet = require('../src/facet');
+var driver = require('../src/driver/client');
 var missing = require('../src/util/misval');
 var moment = require('moment-timezone');
+var utildx = require('../src/util/crossfilter');
 
 describe('crossfilter utility functions', function () {
   describe('Aggregation ', function () {
@@ -290,7 +291,7 @@ describe('crossfilter utility functions', function () {
     facet.minvalAsText = '1';
     facet.maxvalAsText = '1000';
     it('percentile', function () {
-      facet.continuousTransform.setPercentiles();
+      driver.setPercentiles(dataset, facet);
 
       var pctl = utildx.valueFn(facet);
       expect(pctl({a: -1000})).toBe(0);

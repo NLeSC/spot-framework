@@ -202,11 +202,14 @@ module.exports = Base.extend({
    * Initialize the data filter, and construct the getData callback function on the filter.
    */
   initDataFilter: function () {
-    var dataset = this.collection.parent;
+    var dataview = this.collection.parent;
+    var me = dataview.parent;
+    var driver = me.driver;
 
-    dataset.releaseDataFilter(this);
-    dataset.initDataFilter(this);
-    dataset.updateDataFilter(this);
+    driver.releaseDataFilter(dataview, this);
+    driver.initDataFilter(dataview, this);
+    driver.updateDataFilter(this);
+
     this.isInitialized = true;
   },
   /**
@@ -214,18 +217,24 @@ module.exports = Base.extend({
    * related to the filter.
    */
   releaseDataFilter: function () {
-    var dataset = this.collection.parent;
+    var dataview = this.collection.parent;
+    var me = dataview.parent;
+    var driver = me.driver;
 
-    dataset.releaseDataFilter(this);
+    driver.releaseDataFilter(dataview, this);
+
     this.isInitialized = false;
   },
   /**
    * Change the filter parameters for an initialized filter
    */
   updateDataFilter: function () {
-    var dataset = this.collection.parent;
+    var dataview = this.collection.parent;
+    var me = dataview.parent;
+    var driver = me.driver;
 
-    dataset.updateDataFilter(this);
-    dataset.getAllData();
+    driver.updateDataFilter(this);
+
+    dataview.getData();
   }
 });

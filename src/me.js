@@ -3,11 +3,13 @@
  *
  * @class Me
  */
-var AmpersandModel = require('ampersand-model');
-var ClientDataset = require('./dataset/client');
-var ServerDataset = require('./dataset/server');
+var BaseModel = require('./util/base');
+var Dataview = require('./dataview');
 var Datasets = require('./dataset/collection');
+var driverClient = require('./driver/client');
+var driverServer = require('./driver/server');
 var utildx = require('./util/crossfilter');
+var util = require('./util/time');
 var socketIO = require('socket.io-client');
 
 /**
@@ -19,8 +21,6 @@ var socketIO = require('socket.io-client');
  */
 function connectToServer (me, address) {
   var socket = socketIO(address + ':3080');
-
-  me.dataview = new ServerDataset();
 
   socket.on('connect', function () {
     console.log('spot-server: connected');
@@ -105,13 +105,86 @@ function connectToServer (me, address) {
   me.socket = socket;
 }
 
+function setFacetMinMax (datasets, facet) {
+  // This should work for all kinds of facets:
+  // numbers, durations, and datatimes all implement the relevant operations
+
+  var first = true;
+  datasets.forEach(function (dataset) {
+    if (dataset.isActive) {
+      var subFacet = dataset.facets.get(facet.name, 'name');
+      if (first) {
+        facet.minvalAsText = subFacet.transform.transformedMin.toString();
+        facet.maxvalAsText = subFacet.transform.transformedMax.toString();
+        first = false;
+      } else {
+        if (subFacet.minval < facet.minval) {
+          facet.minvalAsText = subFacet.transform.transformedMin.toString();
+        }
+        if (subFacet.maxval > facet.maxval) {
+          facet.maxvalAsText = subFacet.transform.transformedMax.toString();
+        }
+      }
+    }
+  });
+}
+
+function setFacetCategories (datasets, facet) {
+  var categories = {};
+
+  // get categories by combining the sets for the separate datasets
+  datasets.forEach(function (dataset) {
+    if (dataset.isActive) {
+      var subFacet = dataset.facets.get(facet.name, 'name');
+
+      if (subFacet.isCategorial) {
+        subFacet.categorialTransform.rules.forEach(function (rule) {
+          categories[rule.expression] = rule.group;
+        });
+      } else if (subFacet.isDatetime) {
+        var groups = util.timeParts.get(subFacet.datetimeTransform.transformedFormat, 'description').groups;
+        groups.forEach(function (group) {
+          categories[group] = group;
+        });
+      } else {
+        console.error('Not implemented');
+      }
+    }
+  });
+
+  facet.categorialTransform.reset();
+  Object.keys(categories).forEach(function (cat) {
+    facet.categorialTransform.rules.add({
+      expression: cat,
+      count: 0, // FIXME
+      group: categories[cat]
+    });
+  });
+}
+
+/**
+ * Reset min, max, and categories for all facets in the dataview
+ * @param {Me} me Main spot instance
+ */
+function resetDataview (me) {
+  // rescan min/max values and categories for the newly added facets
+  me.dataview.facets.forEach(function (facet) {
+    var newFacet = me.dataview.facets.get(facet.name, 'name');
+
+    if (newFacet.isContinuous || newFacet.isDatetime || newFacet.isDuration) {
+      setFacetMinMax(me.datasets, facet);
+    } else if (newFacet.isCategorial) {
+      setFacetCategories(me.datasets, facet);
+    }
+  });
+}
+
 /*
  * Add or remove facets from a dataset to the global (merged) dataset
+ * @param {Me} me Main spot instance
  * @param {Dataset} dataset Dataset set add or remove
  */
-function toggleDatasetFacets (dataset) {
-  var me = this;
-
+function toggleDatasetFacets (me, dataset) {
   if (dataset.isActive) {
     // remove active facets in dataset from the global dataset...
     dataset.facets.forEach(function (facet) {
@@ -156,29 +229,15 @@ function toggleDatasetFacets (dataset) {
         me.dataview.facets.add(options);
       }
     });
-
-    // rescan min/max values and categories for the newly added facets
-    dataset.facets.forEach(function (facet) {
-      if (facet.isActive) {
-        var newFacet = me.dataview.facets.get(facet.name, 'name');
-
-        if (newFacet.isContinuous || newFacet.isDatetime || newFacet.isDuration) {
-          newFacet.setMinMax();
-        } else if (newFacet.isCategorial) {
-          newFacet.setCategories();
-        }
-      }
-    });
   }
 }
 
 /*
  * Add or remove data from a dataset to the global (merged) dataset
+ * @param {Me} me Main spot instance
  * @param {Dataset} dataset Dataset set add or remove
  */
-function toggleDatasetData (dataset) {
-  var me = this;
-
+function toggleDatasetData (me, dataset) {
   if (dataset.isActive) {
     // if dataset is active, remove it:
     // ...clear all crossfilter filters
@@ -235,19 +294,6 @@ function toggleDatasetData (dataset) {
 
     // ...add to merged dataset
     me.dataview.crossfilter.add(transformedData);
-
-    // ...rescan min/max values and categories for the newly added facets
-    dataset.facets.forEach(function (facet) {
-      if (facet.isActive) {
-        var newFacet = me.dataview.facets.get(facet.name, 'name');
-
-        if (newFacet.isContinuous || newFacet.isDatetime || newFacet.isDuration) {
-          newFacet.setMinMax();
-        } else if (newFacet.isCategorial) {
-          newFacet.setCategories();
-        }
-      }
-    });
   }
 
   // update counts
@@ -276,39 +322,25 @@ function toggleDataset (dataset) {
       tables.push(dataset.databaseTable);
     }
     this.dataview.databaseTable = tables.join('|');
-    toggleDatasetFacets.call(this, dataset);
+    toggleDatasetFacets(this, dataset);
   } else {
     // release all filters
     this.dataview.filters.forEach(function (filter) {
       filter.releaseDataFilter();
     });
     // for client side datasets, manually merge the datasets
-    toggleDatasetFacets.call(this, dataset);
-    toggleDatasetData.call(this, dataset);
+    toggleDatasetFacets(this, dataset);
+    toggleDatasetData(this, dataset);
   }
 
   dataset.isActive = !dataset.isActive;
+
+  resetDataview(this);
 }
 
-module.exports = AmpersandModel.extend({
+module.exports = BaseModel.extend({
   type: 'user',
   props: {
-    /**
-     * A union of all active datasets
-     * @memberof! Me
-     * @type {Dataset}
-     */
-    dataview: ['any', false, function () {
-      return new ClientDataset({
-        isActive: true
-      });
-    }],
-    /**
-     * Is there a connection with a spot sever?
-     * @memberof! Me
-     * @type {boolean}
-     */
-    isConnected: ['boolean', true, false],
     /**
      * Spot server address
      * @memberof! Me
@@ -316,11 +348,37 @@ module.exports = AmpersandModel.extend({
      */
     address: 'string',
     /**
+     * Is there a connection with a spot sever?
+     * @memberof! Me
+     * @type {boolean}
+     */
+    isConnected: ['boolean', true, false],
+    /**
      * When the app in locked down, facets and datasets cannot be edited
      * @memberof! Me
      * @type {boolean}
      */
-    isLockedDown: ['boolean', true, false]
+    isLockedDown: ['boolean', true, false],
+    /**
+     * Type of spot session. Must be 'client' or 'server'
+     * @memberof! Me
+     * @type {string}
+     */
+    sessionType: {
+      type: 'string',
+      required: true,
+      default: 'client',
+      values: ['client', 'server'],
+      setOnce: true
+    }
+  },
+  children: {
+    /**
+     * A union of all active datasets
+     * @memberof! Me
+     * @type {Dataview}
+     */
+    dataview: Dataview
   },
   collections: {
     /**
@@ -329,6 +387,24 @@ module.exports = AmpersandModel.extend({
      * @type {Dataset[]}
      */
     datasets: Datasets
+  },
+  initialize: function () {
+    // first do parent class initialization
+    BaseModel.prototype.initialize.apply(this, arguments);
+
+    // assign backend driver
+    if (arguments.sessionType) {
+      if (arguments.sessionType === 'client') {
+        this.driver = driverClient;
+      } else if (arguments.sessionType === 'server') {
+        this.driver = driverServer;
+      } else {
+        console.error('No driver for type', arguments.sessionType);
+      }
+    } else {
+      // default to client side (crossfilter) sessions
+      this.driver = driverClient;
+    }
   },
   /**
    * Connect to a spot server

@@ -193,16 +193,5 @@ module.exports = AmpersandModel.extend({
   reset: function () {
     this.type = 'none';
     this.cps.reset();
-  },
-  /**
-   * Calculate 100 percentiles (ie. 1,2,3,4 etc.), and initialize the `facet.continuousTransform`
-   * to an approximate percentile mapping.
-   * Use the recommended method from [NIST](http://www.itl.nist.gov/div898/handbook/prc/section2/prc262.htm)
-   * See also the discussion on [Wikipedia](https://en.wikipedia.org/wiki/Percentile)
-   * @param {Dataset} dataset
-   * @param {Facet} facet
-   */
-  setPercentiles: function () {
-    this.parent.collection.parent.setPercentiles(this.parent);
   }
 });

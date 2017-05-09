@@ -1,14 +1,15 @@
 /**
- * Implementation of a dataset backed by Crossfilter, ie. fully client side filtering without the need for a server or database.
+ * Client side filtering using crossfilter
  * Due to limitation of crossfilter with array (or data that has no natrual ordering), this will not work as expected:
  * * dimension: `function (d) {return [d.x, d.y, d.z]}`
  * * group: `function (d) {return [d.x / 10 , d.y / 10, d.z / 10]}`
  *
- * Therfore, we preform grouping already in the dimension itself, and join the array to a string.
+ * Therefore, we preform grouping already in the dimension itself, and join the array to a string.
  * Strings have a natural ordering and thus can be used as dimension value.
  * * dimension: `function (d) -> "d.x/10|d.y/10|d.z/10"`
  * * group: `function (d) {return d;}`
- * @module client/dataset-client
+ *
+ * @module driver/client
  */
 var moment = require('moment-timezone');
 var Crossfilter = require('crossfilter2');
@@ -22,16 +23,17 @@ var aggRankToName = {1: 'aa', 2: 'bb', 3: 'cc', 4: 'dd', 5: 'ee'};
 
 /**
  * setMinMax sets the range of a continuous or time facet
+ * @param {Dataset} dataset
  * @param {Facet} facet
  */
-function setMinMax (facet) {
+function setMinMax (dataset, facet) {
   // we need the value just before a transformation, so baseValueFn
   var valFn = utildx.baseValueFn(facet);
 
   // to be able to mark the value as missing we need it unprocessed, so rawValueFn
   var rawValFn = utildx.rawValueFn(facet);
 
-  var group = this.crossfilter.groupAll();
+  var group = dataset.crossfilter.groupAll();
 
   var lessFn;
   var moreFn;
@@ -154,13 +156,14 @@ function sampleDataset (dataset, N) {
  * setCategories finds finds all values on an ordinal (categorial) axis
  * Updates the categorialTransform of the facet
  *
+ * @param {Dataset} dataset
  * @param {Facet} facet
  */
-function setCategories (facet) {
+function setCategories (dataset, facet) {
   // we need the value just before a transformation, so baseValueFn
   var valFn = utildx.baseValueFn(facet);
 
-  var group = this.crossfilter.groupAll();
+  var group = dataset.crossfilter.groupAll();
   group.reduce(
     // add
     function (p, v) {
@@ -219,10 +222,10 @@ function setCategories (facet) {
  * See also the discussion on [Wikipedia](https://en.wikipedia.org/wiki/Percentile)
  * @param {Facet} facet
  */
-function setPercentiles (facet) {
+function setPercentiles (dataset, facet) {
   // we need the value just before a transformation, so baseValueFn
   var basevalueFn = utildx.baseValueFn(facet);
-  var dimension = this.crossfilter.dimension(basevalueFn);
+  var dimension = dataset.crossfilter.dimension(basevalueFn);
   var data = dimension.bottom(Infinity);
   dimension.dispose();
 
@@ -263,12 +266,11 @@ function setPercentiles (facet) {
  * 1. pick 10 random elements
  * 2. create facets for their properties
  * 3. add facets' values over the sample to the facet.description
+ * 4. set range or categories
  *
  * @param {Dataset} dataset
  */
-function scanData () {
-  var dataset = this; // to make things clearer
-
+function scan (dataset) {
   function facetExists (facets, path) {
     var exists = false;
     facets.forEach(function (f) {
@@ -362,6 +364,7 @@ function scanData () {
     facet.accessor = isArray ? facet.accessor + '[]' : facet.accessor;
     facet.type = guessType(values);
     facet.description = values.join(', ').match('^.{0,40}') + '...';
+    facet.isActive = true;
   }
 
   function recurse (facets, data, path, tree) {
@@ -394,14 +397,22 @@ function scanData () {
   data.forEach(function (d) {
     recurse(dataset.facets, data, '', d);
   });
+
+  dataset.facets.forEach(function (facet) {
+    if (facet.isCategorial) {
+      setCategories(dataset, facet);
+    } else if (facet.isContinuous || facet.isDatetime) {
+      setMinMax(dataset, facet);
+    }
+  });
 }
 
 /**
  * Initialize the data filter, and construct the getData callback function on the filter.
+ * @param {Dataset} dataset
  * @param {Filter} filter
  */
-function initDataFilter (filter) {
-  var dataset = this; // to prevent confusion with the this variable
+function initDataFilter (dataset, filter) {
   var facet;
 
   // use the partitions as groups:
@@ -564,9 +575,10 @@ function initDataFilter (filter) {
 /**
  * The opposite or initDataFilter, it should remove the filter and deallocate other configuration
  * related to the filter.
+ * @param {Dataset} dataset
  * @param {Filter} filter
  */
-function releaseDataFilter (filter) {
+function releaseDataFilter (dataset, filter) {
   if (filter.dimension) {
     filter.dimension.filterAll();
     filter.dimension.dispose();
@@ -585,26 +597,7 @@ function updateDataFilter (filter) {
   }
 }
 
-function getAllData () {
-  if (this.isPaused) {
-    return;
-  }
-  this.filters.forEach(function (filter, i) {
-    if (filter.isInitialized) {
-      filter.getData();
-      filter.trigger('newData');
-    }
-  });
-}
-
-module.exports = Dataset.extend({
-  props: {
-    datasetType: {
-      type: 'string',
-      setOnce: true,
-      default: 'client'
-    }
-  },
+module.exports = {
   initialize: function () {
     // first do parent class initialization
     Dataset.prototype.initialize.apply(this, arguments);
@@ -615,15 +608,12 @@ module.exports = Dataset.extend({
     this.crossfilter = new Crossfilter([]);
     this.countGroup = this.crossfilter.groupAll().reduceCount();
   },
-  /*
-   * Implementation of virtual methods
-   */
-  scanData: scanData,
+
+  scan: scan,
   setMinMax: setMinMax,
   setCategories: setCategories,
   setPercentiles: setPercentiles,
   initDataFilter: initDataFilter,
   releaseDataFilter: releaseDataFilter,
-  updateDataFilter: updateDataFilter,
-  getAllData: getAllData
-});
+  updateDataFilter: updateDataFilter
+};

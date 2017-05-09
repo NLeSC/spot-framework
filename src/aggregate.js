@@ -32,7 +32,10 @@ module.exports = BaseModel.extend({
      * @memberof! Aggregate
      * @type {number}
      */
-    rank: 'number',
+    rank: {
+      type: 'number',
+      required: true
+    },
 
     /**
      * Operation:

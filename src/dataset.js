@@ -1,22 +1,21 @@
 /**
- * A Dataset is responsible for actually managing the data: based on the filters and their factes,
- * implement callbacks that return the processed data in a standardized format.
- *
- * To help analyze data, a few methods to help autoconfigure your session must be implemented.
- *
- * Implementations for Crossfilter (fully in memory client side filtering) and PostgreSQL datasets are available.
  * @class Dataset
  */
-
+var Crossfilter = require('crossfilter2'); // TODO: only for client side datasets
 var BaseModel = require('./util/base');
-var Filters = require('./filter/collection');
 var Facets = require('./facet/collection');
 
-function warnVirtualFuction () {
-  console.error('Warning: function not implemented by dataset');
-}
-
 module.exports = BaseModel.extend({
+  initialize: function () {
+    // first do parent class initialization
+    BaseModel.prototype.initialize.apply(this, arguments);
+
+    /**
+     * Crossfilter instance, see [here](http://square.github.io/crossfilter/)
+     */
+    this.crossfilter = new Crossfilter([]);
+    this.countGroup = this.crossfilter.groupAll().reduceCount();
+  },
   props: {
     /**
      * Name of the dataset
@@ -38,6 +37,15 @@ module.exports = BaseModel.extend({
       required: true,
       default: 'URL'
     },
+    // TODO: only for server side datasets
+    /**
+     * Database table name for server datasets, indicate table joins with a pipe: '|'
+     * @type {string}
+     */
+    databaseTable: {
+      type: 'string',
+      default: ''
+    },
     /**
      * Short description of the dataset
      * @memberof! Dataset
@@ -53,43 +61,9 @@ module.exports = BaseModel.extend({
      * @memberof! Dataset
      * @type {boolean}
      */
-    isActive: ['boolean', true, false],
-    /**
-     * Type of the dataset: crossfilter, server, generic (none)
-     * @memberof! Dataset
-     * @readonly
-     * @type {string}
-     */
-    datasetType: {
-      type: 'string',
-      setOnce: true,
-      values: ['client', 'server', 'generic'],
-      default: 'generic'
-    },
-    /**
-     * Total number of datapoints in the current dataset
-     * @memberof! Dataset
-     * @readonly
-     * @type {number}
-     */
-    dataTotal: ['number', true, 0],
-    /**
-     * Total number of datapoints that are currently selected
-     * @memberof! Dataset
-     * @readonly
-     * @type {number}
-     */
-    dataSelected: ['number', true, 0]
+    isActive: ['boolean', true, false]
   },
   session: {
-    /**
-     * isPaused when true, calls to getAllData are ignored.
-     * This is useful to suppres calls to getData
-     * when adding and removing a number of filters at once.
-     * @memberof! Dataset
-     * @type {boolean}
-     */
-    isPaused: ['boolean', false, true],
     /**
      * For searching through datasets URL and description.
      * True if this dataset matches the search paramters.
@@ -98,70 +72,16 @@ module.exports = BaseModel.extend({
   },
   collections: {
     /**
-     * A Filter collection holding all active filters on the dataset
-     * @memberof! Dataset
-     * @type {Filter[]}
-     */
-    filters: Filters,
-    /**
      * A Facet collection holding pre defined facets
      * @memberof! Dataset
      * @type {Facet[]}
      */
     facets: Facets
   },
-
-  /**
-   * Pause the dataset. This means calls to getData are blocked.
-   * Useful when updating a lot of filters and you are not interested in the intermediate state.
-   * @memberof Dataset
-   */
-  pause: function () {
-    this.isPaused = true;
-  },
-  /**
-   * Unpause the dataset
-   * @memberof Dataset
-   */
-  play: function () {
-    this.isPaused = false;
-  },
-
-  /**
-   * getAllData
-   * Refresh data for all filters, by calling getData for each filter in the filter collection.
-   * @see pause and play
-   * @memberof! Dataset
-   * @function
-   */
-  getAllData: warnVirtualFuction,
-
-  /**
-   * Autoconfigure a dataset:
-   * 1. inspect the dataset, and create facets for the properties
-   * 2. for continuous facets, guess the missing values, and set the minimum and maximum values
-   * 3. for categorial facets, set the categorialTransform
-   *
-   * @memberof! Dataset
-   * @function
-   */
-  scanData: warnVirtualFuction,
-
-  /**
-   * exportData
-   * Returns the raw data
-   * @memberof! Dataset
-   * @function
-   */
-  exportData: warnVirtualFuction,
-
-  // Functions for facets
-  setMinMax: warnVirtualFuction,
-  setCategories: warnVirtualFuction,
-  setPercentiles: warnVirtualFuction,
-
-  // Functions for filters
-  initDataFilter: warnVirtualFuction,
-  releaseDataFilter: warnVirtualFuction,
-  updateDataFilter: warnVirtualFuction
+  scan: function () {
+    var dataset = this;
+    var datasets = dataset.collection;
+    var me = datasets.parent;
+    me.driver.scan(dataset);
+  }
 });

@@ -338,7 +338,10 @@ module.exports = BaseModel.extend({
      * @memberof! Partition
      * @type {number}
      */
-    rank: 'number',
+    rank: {
+      type: 'number',
+      required: true
+    },
 
     /**
      * For categorial and text Facets, the ordering can be alfabetical or by count
