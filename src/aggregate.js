@@ -18,7 +18,7 @@ module.exports = BaseModel.extend({
 
     /**
      * Label for displaying on plots
-     * @memberof! Partition
+     * @memberof! Aggregate
      * @type {string}
      */
     label: {

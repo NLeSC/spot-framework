@@ -1,5 +1,6 @@
 /**
  * @class Dataset
+ * @extends Base
  */
 var Crossfilter = require('crossfilter2'); // TODO: only for client side datasets
 var BaseModel = require('./util/base');
@@ -12,6 +13,9 @@ module.exports = BaseModel.extend({
 
     /**
      * Crossfilter instance, see [here](http://square.github.io/crossfilter/)
+     * used for client side data handling.
+     *
+     * @memberof! Dataset
      */
     this.crossfilter = new Crossfilter([]);
     this.countGroup = this.crossfilter.groupAll().reduceCount();

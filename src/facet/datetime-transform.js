@@ -8,15 +8,6 @@ var moment = require('moment-timezone');
 var util = require('../util/time');
 var misval = require('../util/misval');
 
-/**
- * setMinMax finds the range of a continuous facet,
- *
- * @name setMinMax
- * @memberof! DatetimeTransform
- * @virtual
- * @function
- */
-
 module.exports = AmpersandModel.extend({
   props: {
     /**

@@ -7,19 +7,11 @@ var AmpersandModel = require('ampersand-model');
 var moment = require('moment-timezone');
 var util = require('../util/time');
 
-/**
- * setMinMax finds the range of a continuous facet,
- *
- * @name setMinMax
- * @memberof! DurationTransform
- * @virtual
- * @function
- */
-
 module.exports = AmpersandModel.extend({
   props: {
     /**
      * Units of the duration
+     *
      * @memberof! DurationTransform
      * @type {string}
      */
@@ -27,6 +19,7 @@ module.exports = AmpersandModel.extend({
 
     /**
      * For durations, transforms duration to these units
+     *
      * @memberof! DurationTransform
      * @type {string}
      */
@@ -34,6 +27,7 @@ module.exports = AmpersandModel.extend({
 
     /**
      * Transform the date to this timezone.
+     *
      * @memberof! DatetimeTransform
      * @type {string}
      */
@@ -41,13 +35,19 @@ module.exports = AmpersandModel.extend({
 
     /**
      * Controls conversion to datetime by adding this date
+     *
      * @memberof! DurationTransform
      * @type {string}
      */
     transformedReference: 'string'
   },
   derived: {
-    // reference momentjs for duration <-> datetime conversion
+    /**
+     * Reference momentjs for duration <-> datetime conversion
+     *
+     * @type {moment}
+     * @memberof! DurationTransform
+     */
     referenceMoment: {
       deps: ['transformedReference', 'transformedZone'],
       fn: function () {
@@ -71,6 +71,8 @@ module.exports = AmpersandModel.extend({
     },
     /**
      * The type of the facet after the transformation has been applied
+     *
+     * @type {string}
      * @memberof! DurationTransform
      */
     transformedType: {
@@ -88,6 +90,7 @@ module.exports = AmpersandModel.extend({
     },
     /**
      * The minium value this facet can take, after the transformation has been applied
+     *
      * @type {number}
      * @memberof! DurationTransform
      */
@@ -107,6 +110,7 @@ module.exports = AmpersandModel.extend({
     },
     /**
      * The maximum value this facet can take, after the transformation has been applied
+     *
      * @type {number}
      * @memberof! DurationTransform
      */
@@ -127,6 +131,8 @@ module.exports = AmpersandModel.extend({
   },
 
   /**
+   * Apply the configured transformation to this Facet's value
+   *
    * @function
    * @memberof! DurationTransform
    * @param {Object} inval momentjs duration

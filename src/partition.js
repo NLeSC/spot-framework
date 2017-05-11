@@ -2,7 +2,9 @@
  * Partition
  *
  * Describes a partitioning of the data, based on the values a Facet can take.
+ *
  * @class Partition
+ * @extends Base
  */
 var BaseModel = require('./util/base');
 var Groups = require('./partition/group-collection');
@@ -170,10 +172,13 @@ function setCategorialGroups (partition) {
 
 /**
  * Setup the partition.groups()
+ *
  * @memberof! Partition
  * @param {Partition} partition
  */
-function setGroups (partition) {
+function setGroups () {
+  var partition = this;
+
   if (partition.isCategorial) {
     setCategorialGroups(partition);
   } else if (partition.isContinuous) {
@@ -195,7 +200,8 @@ function setGroups (partition) {
  * @params {Object} Options - silent do not trigger change events
  * @memberof! Partition
  */
-function reset (partition, options) {
+function reset (options) {
+  var partition = this;
   // partition -> partitions -> filter -> filters -> dataset
   var filter = partition.collection.parent;
   var dataset = filter.collection.parent;
@@ -487,10 +493,6 @@ module.exports = BaseModel.extend({
   filterFunction: function () {
     return selection.filterFunction(this);
   },
-  setGroups: function () {
-    setGroups(this);
-  },
-  reset: function (options) {
-    reset(this, options);
-  }
+  setGroups: setGroups,
+  reset: reset
 });

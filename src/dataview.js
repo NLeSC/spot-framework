@@ -1,6 +1,7 @@
 /**
  * A Dataview is a join of Datasets
  *
+ * @extends Dataset
  * @class Dataview
  */
 var Dataset = require('./dataset');

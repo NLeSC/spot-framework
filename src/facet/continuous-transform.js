@@ -14,27 +14,10 @@ var ControlPoints = Collection.extend({
 });
 
 /**
- * setMinMax finds the range of a continuous facet,
- * @memberof! ContinuousTransform
- * @virtual
- * @function
- */
-
-/**
- * Calculate 100 percentiles (ie. 1,2,3,4 etc.)
- * Use the recommended method from [NIST](http://www.itl.nist.gov/div898/handbook/prc/section2/prc262.htm)
- * See also the discussion on [Wikipedia](https://en.wikipedia.org/wiki/Percentile)
- *
- * @name setPercentiles
- * @memberof! ContinuousTransform
- * @virtual
- * @function
- */
-
-/**
  * Apply piecewise linear transformation
  * The function is constant outside the range spanned by the control points;
  * there it is set to value of the first, or the last, control points.
+ *
  * @function
  * @memberof! ContinuousTransform
  * @param {number} x
@@ -74,6 +57,7 @@ function transform (cps, x) {
 
 /**
  * The inverse of the transform
+ *
  * @function
  * @memberof! ContinuousTransform
  * @param {number} fx

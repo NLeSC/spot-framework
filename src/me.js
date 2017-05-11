@@ -1,7 +1,7 @@
 /**
  * Main spot object.
  *
- * @class Me
+ * @class Spot
  */
 var BaseModel = require('./util/base');
 var Dataview = require('./dataview');
@@ -16,10 +16,14 @@ var socketIO = require('socket.io-client');
  * Connect to the spot-server using a websocket on port 3080 and setup callbacks
  *
  * @function
- * @params {me} me Main spot dataobject
  * @params {string} address URL of server, implicitly uses port 3080.
+ *
+ * @memberof! Spot
  */
-function connectToServer (me, address) {
+function connectToServer (address) {
+  var me = this;
+  this.address = address;
+
   var socket = socketIO(address + ':3080');
 
   socket.on('connect', function () {
@@ -164,7 +168,9 @@ function setFacetCategories (datasets, facet) {
 
 /**
  * Reset min, max, and categories for all facets in the dataview
- * @param {Me} me Main spot instance
+ * @param {Spot} me Main spot instance
+ *
+ * @memberof! Spot
  */
 function resetDataview (me) {
   // rescan min/max values and categories for the newly added facets
@@ -181,8 +187,10 @@ function resetDataview (me) {
 
 /*
  * Add or remove facets from a dataset to the global (merged) dataset
- * @param {Me} me Main spot instance
+ * @param {Spot} me Main spot instance
  * @param {Dataset} dataset Dataset set add or remove
+ *
+ * @memberof! Spot
  */
 function toggleDatasetFacets (me, dataset) {
   if (dataset.isActive) {
@@ -234,8 +242,10 @@ function toggleDatasetFacets (me, dataset) {
 
 /*
  * Add or remove data from a dataset to the global (merged) dataset
- * @param {Me} me Main spot instance
+ * @param {Spot} me Main spot instance
  * @param {Dataset} dataset Dataset set add or remove
+ *
+ * @memberof! Spot
  */
 function toggleDatasetData (me, dataset) {
   if (dataset.isActive) {
@@ -301,9 +311,12 @@ function toggleDatasetData (me, dataset) {
   me.dataview.dataSelected = me.dataview.countGroup.value();
 }
 
-/*
- * Add or a dataset to the global (merged) dataset
+/**
+ * Add or remove a dataset from the dataview
  * @param {Dataset} dataset Dataset set add or remove
+ *
+ * @function
+ * @memberof! Spot
  */
 function toggleDataset (dataset) {
   var tables = [];
@@ -343,25 +356,25 @@ module.exports = BaseModel.extend({
   props: {
     /**
      * Spot server address
-     * @memberof! Me
+     * @memberof! Spot
      * @type {string}
      */
     address: 'string',
     /**
      * Is there a connection with a spot sever?
-     * @memberof! Me
+     * @memberof! Spot
      * @type {boolean}
      */
     isConnected: ['boolean', true, false],
     /**
      * When the app in locked down, facets and datasets cannot be edited
-     * @memberof! Me
+     * @memberof! Spot
      * @type {boolean}
      */
     isLockedDown: ['boolean', true, false],
     /**
      * Type of spot session. Must be 'client' or 'server'
-     * @memberof! Me
+     * @memberof! Spot
      * @type {string}
      */
     sessionType: {
@@ -375,7 +388,7 @@ module.exports = BaseModel.extend({
   children: {
     /**
      * A union of all active datasets
-     * @memberof! Me
+     * @memberof! Spot
      * @type {Dataview}
      */
     dataview: Dataview
@@ -383,7 +396,7 @@ module.exports = BaseModel.extend({
   collections: {
     /**
      * Collection of all datasets
-     * @memberof! Me
+     * @memberof! Spot
      * @type {Dataset[]}
      */
     datasets: Datasets
@@ -406,21 +419,6 @@ module.exports = BaseModel.extend({
       this.driver = driverClient;
     }
   },
-  /**
-   * Connect to a spot server
-   * @memberof! Me
-   * @function
-   * @param {string} URL of the spot server
-   */
-  connectToServer: function (address) {
-    this.address = address;
-    connectToServer(this, address);
-  },
-  /**
-   * Include or exclude a dataset from the current union
-   * @memberof! Me
-   * @function
-   * @param {Dataset} dataset Dataset to include or exclude
-   */
+  connectToServer: connectToServer,
   toggleDataset: toggleDataset
 });

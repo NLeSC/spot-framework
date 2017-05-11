@@ -297,6 +297,9 @@ module.exports = BaseModel.extend({
   },
   /**
    * setMinMax sets the range of a continuous or time facet
+   * Actual implementation is in the dataset driver.
+   *
+   * @memberof! Facet
    */
   setMinMax: function () {
     this.collection.parent.setMinMax(this);
@@ -304,6 +307,9 @@ module.exports = BaseModel.extend({
   /**
    * setCategories finds finds all values on an ordinal (categorial) axis
    * Updates the categorialTransform of the facet
+   * Actual implementation is in the dataset driver.
+   *
+   * @memberof! Facet
    */
   setCategories: function () {
     this.collection.parent.setCategories(this);

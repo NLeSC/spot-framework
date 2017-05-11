@@ -78,12 +78,14 @@ module.exports = Base.extend({
         return [];
       }
     },
-    /**
+    /*
      * Call this function to request new data.
      * The dataset backing the facet will copy the data to Filter.data.
      * A newData event is fired when the data is ready to be plotted.
+     *
      * @function
      * @virtual
+     * @private
      * @memberof! Filter
      * @emits newData
      */
@@ -200,6 +202,8 @@ module.exports = Base.extend({
   },
   /**
    * Initialize the data filter, and construct the getData callback function on the filter.
+   *
+   * @memberof! Filter
    */
   initDataFilter: function () {
     var dataview = this.collection.parent;
@@ -215,6 +219,8 @@ module.exports = Base.extend({
   /**
    * The opposite or initDataFilter, it should remove the filter and deallocate other configuration
    * related to the filter.
+   *
+   * @memberof! Filter
    */
   releaseDataFilter: function () {
     var dataview = this.collection.parent;
@@ -226,7 +232,9 @@ module.exports = Base.extend({
     this.isInitialized = false;
   },
   /**
-   * Change the filter parameters for an initialized filter
+   * Apply changes to the filter (like selecting groups)
+   *
+   * @memberof! Filter
    */
   updateDataFilter: function () {
     var dataview = this.collection.parent;
