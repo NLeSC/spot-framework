@@ -15,6 +15,7 @@
     "name": "Jisk Attema",
     "email": "j.attema@esciencecenter.nl"
   },
+  "main": "./src/me.js",
   "contributors": [
     {
       "name": "Faruk Diblen",
