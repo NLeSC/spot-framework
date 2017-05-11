@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>dataset.js - Documentation</title>
+
+    <script src="scripts/prettify/prettify.js"></script>
+    <script src="scripts/prettify/lang-css.js"></script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css">
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+<body>
+
+<input type="checkbox" id="nav-trigger" class="nav-trigger" />
+<label for="nav-trigger" class="navicon-button x">
+  <div class="navicon"></div>
+</label>
+
+<label for="nav-trigger" class="overlay"></label>
+
+<nav>
+    <li class="nav-link nav-home-link"><a href="index.html">Home</a></li><li class="nav-heading">Classes</li><li class="nav-heading"><span class="nav-item-type type-class">C</span><span class="nav-item-name"><a href="Aggregate.html">Aggregate</a></span></li><li class="nav-heading"><span class="nav-item-type type-class">C</span><span class="nav-item-name"><a href="Base.html">Base</a></span></li><li class="nav-heading"><span class="nav-item-type type-class">C</span><span class="nav-item-name"><a href="CategorialRule.html">CategorialRule</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="CategorialRule.html#.match">match</a></span></li><li class="nav-heading"><span class="nav-item-type type-class">C</span><span class="nav-item-name"><a href="CategorialTransform.html">CategorialTransform</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="CategorialTransform.html#.transform">transform</a></span></li><li class="nav-heading"><span class="nav-item-type type-class">C</span><span class="nav-item-name"><a href="ContinuousTransform.html">ContinuousTransform</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="ContinuousTransform.html#.inverse">inverse</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="ContinuousTransform.html#.transform">transform</a></span></li><li class="nav-heading"><span class="nav-item-type type-class">C</span><span class="nav-item-name"><a href="ControlPoint.html">ControlPoint</a></span></li><li class="nav-heading"><span class="nav-item-type type-class">C</span><span class="nav-item-name"><a href="Dataset.html">Dataset</a></span></li><li class="nav-heading"><span class="nav-item-type type-class">C</span><span class="nav-item-name"><a href="Dataview.html">Dataview</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="Dataview.html#.pause">pause</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="Dataview.html#.play">play</a></span></li><li class="nav-heading"><span class="nav-item-type type-class">C</span><span class="nav-item-name"><a href="DatetimeTransform.html">DatetimeTransform</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="DatetimeTransform.html#.transform">transform</a></span></li><li class="nav-heading"><span class="nav-item-type type-class">C</span><span class="nav-item-name"><a href="DurationTransform.html">DurationTransform</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="DurationTransform.html#.transform">transform</a></span></li><li class="nav-heading"><span class="nav-item-type type-class">C</span><span class="nav-item-name"><a href="Facet.html">Facet</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="Facet.html#.setCategories">setCategories</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="Facet.html#.setMinMax">setMinMax</a></span></li><li class="nav-heading"><span class="nav-item-type type-class">C</span><span class="nav-item-name"><a href="Filter.html">Filter</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="Filter.html#.initDataFilter">initDataFilter</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="Filter.html#.releaseDataFilter">releaseDataFilter</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="Filter.html#.updateDataFilter">updateDataFilter</a></span></li><li class="nav-heading"><span class="nav-item-type type-class">C</span><span class="nav-item-name"><a href="Group.html">Group</a></span></li><li class="nav-heading"><span class="nav-item-type type-class">C</span><span class="nav-item-name"><a href="Partition.html">Partition</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="Partition.html#.reset">reset</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="Partition.html#.setGroups">setGroups</a></span></li><li class="nav-heading"><span class="nav-item-type type-class">C</span><span class="nav-item-name"><a href="Spot.html">Spot</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="Spot.html#.connectToServer">connectToServer</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="Spot.html#.resetDataview">resetDataview</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="Spot.html#.toggleDataset">toggleDataset</a></span></li><li class="nav-heading">Modules</li><li class="nav-heading"><span class="nav-item-type type-module">M</span><span class="nav-item-name"><a href="module-client_misval.html">client/misval</a></span></li><li class="nav-heading"><span class="nav-item-type type-module">M</span><span class="nav-item-name"><a href="module-client_util-crossfilter.html">client/util-crossfilter</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-client_util-crossfilter.html#~baseValueFn">baseValueFn</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-client_util-crossfilter.html#~groupFn">groupFn</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-client_util-crossfilter.html#~rawValueFn">rawValueFn</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-client_util-crossfilter.html#~reduceFn">reduceFn</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-client_util-crossfilter.html#~valueFn">valueFn</a></span></li><li class="nav-heading"><span class="nav-item-type type-module">M</span><span class="nav-item-name"><a href="module-client_util-selection.html">client/util-selection</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-client_util-selection.html#~updateSelection">updateSelection</a></span></li><li class="nav-heading"><span class="nav-item-type type-module">M</span><span class="nav-item-name"><a href="module-driver_client.html">driver/client</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-driver_client.html#~initDataFilter">initDataFilter</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-driver_client.html#~releaseDataFilter">releaseDataFilter</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-driver_client.html#~sampleDataset">sampleDataset</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-driver_client.html#~scan">scan</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-driver_client.html#~setCategories">setCategories</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-driver_client.html#~setMinMax">setMinMax</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-driver_client.html#~setPercentiles">setPercentiles</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-driver_client.html#~updateDataFilter">updateDataFilter</a></span></li><li class="nav-heading"><span class="nav-item-type type-module">M</span><span class="nav-item-name"><a href="module-driver_server.html">driver/server</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-driver_server.html#~initDataFilter">initDataFilter</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-driver_server.html#~releaseDataFilter">releaseDataFilter</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-driver_server.html#~scan">scan</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-driver_server.html#~setCategories">setCategories</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-driver_server.html#~setMinMax">setMinMax</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-driver_server.html#~setPercentiles">setPercentiles</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-driver_server.html#~updateDataFilter">updateDataFilter</a></span></li><li class="nav-heading"><a href="global.html">Globals</a></li>
+</nav>
+
+<div id="main">
+    
+    <h1 class="page-title">dataset.js</h1>
+    
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/**
+ * @class Dataset
+ * @extends Base
+ */
+var Crossfilter = require('crossfilter2'); // TODO: only for client side datasets
+var BaseModel = require('./util/base');
+var Facets = require('./facet/collection');
+
+module.exports = BaseModel.extend({
+  initialize: function () {
+    // first do parent class initialization
+    BaseModel.prototype.initialize.apply(this, arguments);
+
+    /**
+     * Crossfilter instance, see [here](http://square.github.io/crossfilter/)
+     * used for client side data handling.
+     *
+     * @memberof! Dataset
+     */
+    this.crossfilter = new Crossfilter([]);
+    this.countGroup = this.crossfilter.groupAll().reduceCount();
+  },
+  props: {
+    /**
+     * Name of the dataset
+     * @memberof! Dataset
+     * @type {string}
+     */
+    name: {
+      type: 'string',
+      required: true,
+      default: 'Name'
+    },
+    /**
+     * URL, fi. to paper, dataset owner, etc.
+     * @memberof! Dataset
+     * @type {string}
+     */
+    URL: {
+      type: 'string',
+      required: true,
+      default: 'URL'
+    },
+    // TODO: only for server side datasets
+    /**
+     * Database table name for server datasets, indicate table joins with a pipe: '|'
+     * @type {string}
+     */
+    databaseTable: {
+      type: 'string',
+      default: ''
+    },
+    /**
+     * Short description of the dataset
+     * @memberof! Dataset
+     * @type {string}
+     */
+    description: {
+      type: 'string',
+      required: true,
+      default: 'Description'
+    },
+    /**
+     * If dataset is part of the current session
+     * @memberof! Dataset
+     * @type {boolean}
+     */
+    isActive: ['boolean', true, false]
+  },
+  session: {
+    /**
+     * For searching through datasets URL and description.
+     * True if this dataset matches the search paramters.
+     */
+    show: ['boolean', true, true]
+  },
+  collections: {
+    /**
+     * A Facet collection holding pre defined facets
+     * @memberof! Dataset
+     * @type {Facet[]}
+     */
+    facets: Facets
+  },
+  scan: function () {
+    var dataset = this;
+    var datasets = dataset.collection;
+    var me = datasets.parent;
+    me.driver.scan(dataset);
+  }
+});
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<br class="clear">
+
+<footer>
+    Generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.3</a> on Thu May 11 2017 16:31:18 GMT+0200 (CEST) using the Minami theme.
+</footer>
+
+<script>prettyPrint();</script>
+<script src="scripts/linenumber.js"></script>
+</body>
+</html>

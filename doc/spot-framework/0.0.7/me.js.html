@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>me.js - Documentation</title>
+
+    <script src="scripts/prettify/prettify.js"></script>
+    <script src="scripts/prettify/lang-css.js"></script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css">
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+<body>
+
+<input type="checkbox" id="nav-trigger" class="nav-trigger" />
+<label for="nav-trigger" class="navicon-button x">
+  <div class="navicon"></div>
+</label>
+
+<label for="nav-trigger" class="overlay"></label>
+
+<nav>
+    <li class="nav-link nav-home-link"><a href="index.html">Home</a></li><li class="nav-heading">Classes</li><li class="nav-heading"><span class="nav-item-type type-class">C</span><span class="nav-item-name"><a href="Aggregate.html">Aggregate</a></span></li><li class="nav-heading"><span class="nav-item-type type-class">C</span><span class="nav-item-name"><a href="Base.html">Base</a></span></li><li class="nav-heading"><span class="nav-item-type type-class">C</span><span class="nav-item-name"><a href="CategorialRule.html">CategorialRule</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="CategorialRule.html#.match">match</a></span></li><li class="nav-heading"><span class="nav-item-type type-class">C</span><span class="nav-item-name"><a href="CategorialTransform.html">CategorialTransform</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="CategorialTransform.html#.transform">transform</a></span></li><li class="nav-heading"><span class="nav-item-type type-class">C</span><span class="nav-item-name"><a href="ContinuousTransform.html">ContinuousTransform</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="ContinuousTransform.html#.inverse">inverse</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="ContinuousTransform.html#.transform">transform</a></span></li><li class="nav-heading"><span class="nav-item-type type-class">C</span><span class="nav-item-name"><a href="ControlPoint.html">ControlPoint</a></span></li><li class="nav-heading"><span class="nav-item-type type-class">C</span><span class="nav-item-name"><a href="Dataset.html">Dataset</a></span></li><li class="nav-heading"><span class="nav-item-type type-class">C</span><span class="nav-item-name"><a href="Dataview.html">Dataview</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="Dataview.html#.pause">pause</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="Dataview.html#.play">play</a></span></li><li class="nav-heading"><span class="nav-item-type type-class">C</span><span class="nav-item-name"><a href="DatetimeTransform.html">DatetimeTransform</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="DatetimeTransform.html#.transform">transform</a></span></li><li class="nav-heading"><span class="nav-item-type type-class">C</span><span class="nav-item-name"><a href="DurationTransform.html">DurationTransform</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="DurationTransform.html#.transform">transform</a></span></li><li class="nav-heading"><span class="nav-item-type type-class">C</span><span class="nav-item-name"><a href="Facet.html">Facet</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="Facet.html#.setCategories">setCategories</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="Facet.html#.setMinMax">setMinMax</a></span></li><li class="nav-heading"><span class="nav-item-type type-class">C</span><span class="nav-item-name"><a href="Filter.html">Filter</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="Filter.html#.initDataFilter">initDataFilter</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="Filter.html#.releaseDataFilter">releaseDataFilter</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="Filter.html#.updateDataFilter">updateDataFilter</a></span></li><li class="nav-heading"><span class="nav-item-type type-class">C</span><span class="nav-item-name"><a href="Group.html">Group</a></span></li><li class="nav-heading"><span class="nav-item-type type-class">C</span><span class="nav-item-name"><a href="Partition.html">Partition</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="Partition.html#.reset">reset</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="Partition.html#.setGroups">setGroups</a></span></li><li class="nav-heading"><span class="nav-item-type type-class">C</span><span class="nav-item-name"><a href="Spot.html">Spot</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="Spot.html#.connectToServer">connectToServer</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="Spot.html#.resetDataview">resetDataview</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="Spot.html#.toggleDataset">toggleDataset</a></span></li><li class="nav-heading">Modules</li><li class="nav-heading"><span class="nav-item-type type-module">M</span><span class="nav-item-name"><a href="module-client_misval.html">client/misval</a></span></li><li class="nav-heading"><span class="nav-item-type type-module">M</span><span class="nav-item-name"><a href="module-client_util-crossfilter.html">client/util-crossfilter</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-client_util-crossfilter.html#~baseValueFn">baseValueFn</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-client_util-crossfilter.html#~groupFn">groupFn</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-client_util-crossfilter.html#~rawValueFn">rawValueFn</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-client_util-crossfilter.html#~reduceFn">reduceFn</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-client_util-crossfilter.html#~valueFn">valueFn</a></span></li><li class="nav-heading"><span class="nav-item-type type-module">M</span><span class="nav-item-name"><a href="module-client_util-selection.html">client/util-selection</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-client_util-selection.html#~updateSelection">updateSelection</a></span></li><li class="nav-heading"><span class="nav-item-type type-module">M</span><span class="nav-item-name"><a href="module-driver_client.html">driver/client</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-driver_client.html#~initDataFilter">initDataFilter</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-driver_client.html#~releaseDataFilter">releaseDataFilter</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-driver_client.html#~sampleDataset">sampleDataset</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-driver_client.html#~scan">scan</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-driver_client.html#~setCategories">setCategories</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-driver_client.html#~setMinMax">setMinMax</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-driver_client.html#~setPercentiles">setPercentiles</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-driver_client.html#~updateDataFilter">updateDataFilter</a></span></li><li class="nav-heading"><span class="nav-item-type type-module">M</span><span class="nav-item-name"><a href="module-driver_server.html">driver/server</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-driver_server.html#~initDataFilter">initDataFilter</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-driver_server.html#~releaseDataFilter">releaseDataFilter</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-driver_server.html#~scan">scan</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-driver_server.html#~setCategories">setCategories</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-driver_server.html#~setMinMax">setMinMax</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-driver_server.html#~setPercentiles">setPercentiles</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-driver_server.html#~updateDataFilter">updateDataFilter</a></span></li><li class="nav-heading"><a href="global.html">Globals</a></li>
+</nav>
+
+<div id="main">
+    
+    <h1 class="page-title">me.js</h1>
+    
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/**
+ * Main spot object.
+ *
+ * @class Spot
+ */
+var BaseModel = require('./util/base');
+var Dataview = require('./dataview');
+var Datasets = require('./dataset/collection');
+var driverClient = require('./driver/client');
+var driverServer = require('./driver/server');
+var utildx = require('./util/crossfilter');
+var util = require('./util/time');
+var socketIO = require('socket.io-client');
+
+/**
+ * Connect to the spot-server using a websocket on port 3080 and setup callbacks
+ *
+ * @function
+ * @params {string} address URL of server, implicitly uses port 3080.
+ *
+ * @memberof! Spot
+ */
+function connectToServer (address) {
+  var me = this;
+  this.address = address;
+
+  var socket = socketIO(address + ':3080');
+
+  socket.on('connect', function () {
+    console.log('spot-server: connected');
+    me.isConnected = true;
+  });
+
+  socket.on('disconnect', function () {
+    console.log('spot-server: disconnected');
+    me.isConnected = false;
+  });
+
+  socket.on('syncDatasets', function (data) {
+    console.log('spot-server: syncDatasets');
+    me.datasets.reset(data);
+  });
+
+  socket.on('syncDataset', function (data) {
+    console.log('spot-server: syncDataset');
+    me.dataview.reset(data);
+  });
+
+  socket.on('syncFilters', function (data) {
+    console.log('spot-server: syncFilters');
+    me.dataview.filters.add(data, {merge: true});
+  });
+
+  socket.on('syncFacets', function (req) {
+    console.log('spot-server: syncFacets');
+    var dataset;
+    if (req.datasetId === me.dataview.getId()) {
+      dataset = me.dataview;
+    } else {
+      dataset = me.datasets.get(req.datasetId);
+    }
+
+    if (dataset &amp;&amp; req.data) {
+      dataset.facets.add(req.data, {merge: true});
+    }
+  });
+
+  socket.on('newData', function (req) {
+    console.log('spot-server: newData ' + req.filterId);
+    var filter = me.dataview.filters.get(req.filterId);
+    if (req.data) {
+      filter.data = req.data;
+
+      // for text filters, rebuild partition and count
+      filter.partitions.forEach(function (partition, p) {
+        var columnToName = {1: 'a', 2: 'b', 3: 'c', 4: 'd'};
+
+        if (partition.isText) {
+          partition.groups.reset(null, {silent: true});
+          filter.data.forEach(function (d) {
+            var count = (parseFloat(d.aa) || parseInt(d.count)) || 0;
+
+            if (count) {
+              partition.groups.add({
+                min: 0,
+                max: 100,
+                count: count,
+                label: d[columnToName[(p + 1)]],
+                value: d[columnToName[(p + 1)]]
+              }, {silent: true});
+            }
+          });
+          partition.groups.sort();
+        }
+      });
+      filter.trigger('newData');
+    }
+  });
+
+  socket.on('newMetaData', function (req) {
+    console.log('spot-server: newMetaData');
+    me.dataview.dataTotal = parseInt(req.dataTotal);
+    me.dataview.dataSelected = parseInt(req.dataSelected);
+  });
+
+  console.log('spot-server: connecting');
+  socket.connect();
+
+  me.socket = socket;
+}
+
+function setFacetMinMax (datasets, facet) {
+  // This should work for all kinds of facets:
+  // numbers, durations, and datatimes all implement the relevant operations
+
+  var first = true;
+  datasets.forEach(function (dataset) {
+    if (dataset.isActive) {
+      var subFacet = dataset.facets.get(facet.name, 'name');
+      if (first) {
+        facet.minvalAsText = subFacet.transform.transformedMin.toString();
+        facet.maxvalAsText = subFacet.transform.transformedMax.toString();
+        first = false;
+      } else {
+        if (subFacet.minval &lt; facet.minval) {
+          facet.minvalAsText = subFacet.transform.transformedMin.toString();
+        }
+        if (subFacet.maxval > facet.maxval) {
+          facet.maxvalAsText = subFacet.transform.transformedMax.toString();
+        }
+      }
+    }
+  });
+}
+
+function setFacetCategories (datasets, facet) {
+  var categories = {};
+
+  // get categories by combining the sets for the separate datasets
+  datasets.forEach(function (dataset) {
+    if (dataset.isActive) {
+      var subFacet = dataset.facets.get(facet.name, 'name');
+
+      if (subFacet.isCategorial) {
+        subFacet.categorialTransform.rules.forEach(function (rule) {
+          categories[rule.expression] = rule.group;
+        });
+      } else if (subFacet.isDatetime) {
+        var groups = util.timeParts.get(subFacet.datetimeTransform.transformedFormat, 'description').groups;
+        groups.forEach(function (group) {
+          categories[group] = group;
+        });
+      } else {
+        console.error('Not implemented');
+      }
+    }
+  });
+
+  facet.categorialTransform.reset();
+  Object.keys(categories).forEach(function (cat) {
+    facet.categorialTransform.rules.add({
+      expression: cat,
+      count: 0, // FIXME
+      group: categories[cat]
+    });
+  });
+}
+
+/**
+ * Reset min, max, and categories for all facets in the dataview
+ * @param {Spot} me Main spot instance
+ *
+ * @memberof! Spot
+ */
+function resetDataview (me) {
+  // rescan min/max values and categories for the newly added facets
+  me.dataview.facets.forEach(function (facet) {
+    var newFacet = me.dataview.facets.get(facet.name, 'name');
+
+    if (newFacet.isContinuous || newFacet.isDatetime || newFacet.isDuration) {
+      setFacetMinMax(me.datasets, facet);
+    } else if (newFacet.isCategorial) {
+      setFacetCategories(me.datasets, facet);
+    }
+  });
+}
+
+/*
+ * Add or remove facets from a dataset to the global (merged) dataset
+ * @param {Spot} me Main spot instance
+ * @param {Dataset} dataset Dataset set add or remove
+ *
+ * @memberof! Spot
+ */
+function toggleDatasetFacets (me, dataset) {
+  if (dataset.isActive) {
+    // remove active facets in dataset from the global dataset...
+    dataset.facets.forEach(function (facet) {
+      if (!facet.isActive) {
+        return;
+      }
+
+      // ...but only when no other active dataset contains it
+      var facetIsUnique = true;
+      me.datasets.forEach(function (otherDataset) {
+        if (!otherDataset.isActive || otherDataset === dataset) {
+          return;
+        }
+        if (otherDataset.facets.get(facet.name, 'name')) {
+          facetIsUnique = false;
+        }
+      });
+      if (facetIsUnique) {
+        var toRemove = me.dataview.facets.get(facet.name, 'name');
+        me.dataview.facets.remove(toRemove);
+      }
+    });
+  } else if (!dataset.isActive) {
+    // copy facets
+    dataset.facets.forEach(function (facet) {
+      // do nothing if facet is not active
+      if (!facet.isActive) {
+        return;
+      }
+
+      // default options for all facet types
+      var options = {
+        name: facet.name,
+        accessor: facet.name,
+        type: facet.transform.transformedType,
+        units: facet.units, // TODO: transformed units?
+        isActive: true
+      };
+
+      // do not add if a similar facet already exists
+      if (!me.dataview.facets.get(facet.name, 'name')) {
+        me.dataview.facets.add(options);
+      }
+    });
+  }
+}
+
+/*
+ * Add or remove data from a dataset to the global (merged) dataset
+ * @param {Spot} me Main spot instance
+ * @param {Dataset} dataset Dataset set add or remove
+ *
+ * @memberof! Spot
+ */
+function toggleDatasetData (me, dataset) {
+  if (dataset.isActive) {
+    // if dataset is active, remove it:
+    // ...clear all crossfilter filters
+    this.dataview.filters.forEach(function (filter) {
+      // BUGFIX: when loading sessions, the dataset is not initialized properly
+      // so check for it to be sure
+      if (filter.dimension) {
+        filter.dimension.filterAll();
+      }
+    });
+
+    // ...filter all data, originating from the dataset from the ataset
+    var dimension = me.dataview.crossfilter.dimension(function (d) {
+      return d._OriginalDatasetId;
+    });
+    dimension.filter(dataset.getId());
+
+    // ...remove matching data
+    me.dataview.crossfilter.remove();
+
+    // ...restore original filters
+    dimension.filterAll();
+    dimension.dispose();
+    me.dataview.filters.forEach(function (filter) {
+      filter.updateDataFilter();
+    });
+  } else if (!dataset.isActive) {
+    // if dataset is not active, add it
+    // ...find facets to copy
+    var dataTransforms = [];
+    dataset.facets.forEach(function (facet) {
+      // do nothing if facet is not active
+      if (!facet.isActive) {
+        return;
+      }
+      dataTransforms.push({
+        key: facet.name,
+        fn: utildx.valueFn(facet)
+      });
+    });
+
+    // ...transform data
+    var data = dataset.crossfilter.all();
+    var transformedData = [];
+
+    data.forEach(function (datum) {
+      var transformedDatum = {};
+      dataTransforms.forEach(function (transform) {
+        transformedDatum[transform.key] = transform.fn(datum);
+      });
+      transformedDatum._OriginalDatasetId = dataset.getId();
+      transformedData.push(transformedDatum);
+    });
+
+    // ...add to merged dataset
+    me.dataview.crossfilter.add(transformedData);
+  }
+
+  // update counts
+  me.dataview.dataTotal = me.dataview.crossfilter.size();
+  me.dataview.dataSelected = me.dataview.countGroup.value();
+}
+
+/**
+ * Add or remove a dataset from the dataview
+ * @param {Dataset} dataset Dataset set add or remove
+ *
+ * @function
+ * @memberof! Spot
+ */
+function toggleDataset (dataset) {
+  var tables = [];
+
+  if (this.isConnected) {
+    // for server side datasets, keep track of the database tables
+
+    // 1. all other active datasets
+    this.datasets.forEach(function (d) {
+      if (d.isActive &amp;&amp; d !== dataset) {
+        tables.push(d.databaseTable);
+      }
+    });
+    // 2. this dataset
+    if (!dataset.isActive) {
+      tables.push(dataset.databaseTable);
+    }
+    this.dataview.databaseTable = tables.join('|');
+    toggleDatasetFacets(this, dataset);
+  } else {
+    // release all filters
+    this.dataview.filters.forEach(function (filter) {
+      filter.releaseDataFilter();
+    });
+    // for client side datasets, manually merge the datasets
+    toggleDatasetFacets(this, dataset);
+    toggleDatasetData(this, dataset);
+  }
+
+  dataset.isActive = !dataset.isActive;
+
+  resetDataview(this);
+}
+
+module.exports = BaseModel.extend({
+  type: 'user',
+  props: {
+    /**
+     * Spot server address
+     * @memberof! Spot
+     * @type {string}
+     */
+    address: 'string',
+    /**
+     * Is there a connection with a spot sever?
+     * @memberof! Spot
+     * @type {boolean}
+     */
+    isConnected: ['boolean', true, false],
+    /**
+     * When the app in locked down, facets and datasets cannot be edited
+     * @memberof! Spot
+     * @type {boolean}
+     */
+    isLockedDown: ['boolean', true, false],
+    /**
+     * Type of spot session. Must be 'client' or 'server'
+     * @memberof! Spot
+     * @type {string}
+     */
+    sessionType: {
+      type: 'string',
+      required: true,
+      default: 'client',
+      values: ['client', 'server'],
+      setOnce: true
+    }
+  },
+  children: {
+    /**
+     * A union of all active datasets
+     * @memberof! Spot
+     * @type {Dataview}
+     */
+    dataview: Dataview
+  },
+  collections: {
+    /**
+     * Collection of all datasets
+     * @memberof! Spot
+     * @type {Dataset[]}
+     */
+    datasets: Datasets
+  },
+  initialize: function () {
+    // first do parent class initialization
+    BaseModel.prototype.initialize.apply(this, arguments);
+
+    // assign backend driver
+    if (arguments.sessionType) {
+      if (arguments.sessionType === 'client') {
+        this.driver = driverClient;
+      } else if (arguments.sessionType === 'server') {
+        this.driver = driverServer;
+      } else {
+        console.error('No driver for type', arguments.sessionType);
+      }
+    } else {
+      // default to client side (crossfilter) sessions
+      this.driver = driverClient;
+    }
+  },
+  connectToServer: connectToServer,
+  toggleDataset: toggleDataset
+});
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<br class="clear">
+
+<footer>
+    Generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.3</a> on Thu May 11 2017 16:31:18 GMT+0200 (CEST) using the Minami theme.
+</footer>
+
+<script>prettyPrint();</script>
+<script src="scripts/linenumber.js"></script>
+</body>
+</html>
