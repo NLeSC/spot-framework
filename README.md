@@ -1,6 +1,7 @@
 # Spot - framework
 [![Build Status](https://travis-ci.org/NLeSC/spot-framework.svg?branch=master)](https://travis-ci.org/NLeSC/spot-framework)
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/783828d8433a49a8b33dfa3874e46f76)](https://www.codacy.com/app/NLeSC/spot-framework?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=NLeSC/spot-framework&amp;utm_campaign=Badge_Grade)
+[![Codacy Badge](https://api.codacy.com/project/badge/Coverage/783828d8433a49a8b33dfa3874e46f76)](https://www.codacy.com/app/NLeSC/spot-framework?utm_source=github.com&utm_medium=referral&utm_content=NLeSC/spot-framework&utm_campaign=Badge_Coverage)
 [![js-semistandard-style](https://img.shields.io/badge/code%20style-semistandard-brightgreen.svg?style=flat-square)](https://github.com/Flet/semistandard)
 
 Group, bin, combine, and aggregate datasets for visual analytics using a single API.
