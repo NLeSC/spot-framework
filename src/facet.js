@@ -297,21 +297,53 @@ module.exports = BaseModel.extend({
   },
   /**
    * setMinMax sets the range of a continuous or time facet
-   * Actual implementation is in the dataset driver.
+   * For facets in a dataview, the minimum is just the minimum of the facet over all active datasets,
+   * and the same for the maximum.
+   * For facets in a datset, the actual implementation is in the dataset driver.
    *
    * @memberof! Facet
    */
   setMinMax: function () {
-    this.collection.parent.setMinMax(this);
+    var Dataset = require('./dataset');
+    var Dataview = require('./dataview');
+
+    var ancestor = this.collection.parent;
+    var spot;
+
+    if (ancestor instanceof Dataview) {
+      // Facet -> Facets -> Dataview -> Spot
+      spot = this.collection.parent.parent;
+      spot.setFacetMinMax(this);
+    } else if (ancestor instanceof Dataset) {
+      // Facet -> Facets -> Dataset -> Datasets -> Spot
+      spot = this.collection.parent.collection.parent;
+      spot.driver.setMinMax(this);
+    }
   },
   /**
    * setCategories finds finds all values on an ordinal (categorial) axis
    * Updates the categorialTransform of the facet
-   * Actual implementation is in the dataset driver.
+   * For facets in a dataview, this is the union of the categories of facet over all active datasets.
+   * For facets in a dataset, the actual implementation is in the dataset driver.
    *
    * @memberof! Facet
    */
   setCategories: function () {
+    var Dataset = require('./dataset');
+    var Dataview = require('./dataview');
+
+    var ancestor = this.collection.parent;
+    var spot;
+
+    if (ancestor instanceof Dataview) {
+      // Facet -> Facets -> Dataview -> Spot
+      spot = this.collection.parent.parent;
+      spot.setFacetCategories(this);
+    } else if (ancestor instanceof Dataset) {
+      // Facet -> Facets -> Dataset -> Datasets -> Spot
+      spot = this.collection.parent.collection.parent;
+      spot.driver.setCategories(this);
+    }
     this.collection.parent.setCategories(this);
   }
 });

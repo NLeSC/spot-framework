@@ -35,23 +35,25 @@
       "/docs"
     ]
   },
-  "devDependencies": {
+  "dependencies": {
     "ampersand-collection": "^2.0.0",
     "ampersand-model": "^8.0.0",
+    "crossfilter2": "git://github.com/crossfilter/crossfilter.git",
+    "moment": "^2.13.0",
+    "moment-timezone": "^0.5.4",
+    "socket.io-client": "^1.4.6"
+  },
+  "devDependencies": {
     "browserify": "^13.0.0",
     "codacy-coverage": "^2.0.0",
-    "crossfilter2": "git://github.com/crossfilter/crossfilter.git",
     "csv": "^1.1.0",
     "istanbul": "^0.4.3",
     "jade": "^1.11.0",
     "jasmine": "^2.4.1",
     "jsdoc": "^3.4.0",
     "minami": "^1.1.1",
-    "moment": "^2.13.0",
-    "moment-timezone": "^0.5.4",
     "semistandard": "^9.0.0",
     "socket.io": "^1.4.6",
-    "socket.io-client": "^1.4.6",
     "stylus": "^0.54.5",
     "uglify-js": "^2.6.2"
   },

@@ -29,22 +29,22 @@ function getData () {
       }
     });
   } else {
-    console.error('Dataset type not implemented');
+    console.error('Session type not implemented for this dataview');
   }
 }
 
 module.exports = Dataset.extend({
   props: {
     /**
-     * Total number of datapoints in the current dataset
-     * @memberof! Dataset
+     * Total number of datapoints in the current dataview
+     * @memberof! Dataview
      * @readonly
      * @type {number}
      */
     dataTotal: ['number', true, 0],
     /**
      * Number of datapoints that are currently selected
-     * @memberof! Dataset
+     * @memberof! Dataview
      * @readonly
      * @type {number}
      */
@@ -84,5 +84,9 @@ module.exports = Dataset.extend({
     this.isPaused = false;
   },
 
+  /**
+   * Get data for all filters linked to this dataview.
+   * When data has become available, a `newData` event is triggered on the filter.
+   */
   getData: getData
 });

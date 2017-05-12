@@ -85,7 +85,7 @@ module.exports = BaseModel.extend({
   scan: function () {
     var dataset = this;
     var datasets = dataset.collection;
-    var me = datasets.parent;
-    me.driver.scan(dataset);
+    var spot = datasets.parent;
+    spot.driver.scan(dataset);
   }
 });

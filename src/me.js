@@ -109,63 +109,6 @@ function connectToServer (address) {
   me.socket = socket;
 }
 
-function setFacetMinMax (datasets, facet) {
-  // This should work for all kinds of facets:
-  // numbers, durations, and datatimes all implement the relevant operations
-
-  var first = true;
-  datasets.forEach(function (dataset) {
-    if (dataset.isActive) {
-      var subFacet = dataset.facets.get(facet.name, 'name');
-      if (first) {
-        facet.minvalAsText = subFacet.transform.transformedMin.toString();
-        facet.maxvalAsText = subFacet.transform.transformedMax.toString();
-        first = false;
-      } else {
-        if (subFacet.minval < facet.minval) {
-          facet.minvalAsText = subFacet.transform.transformedMin.toString();
-        }
-        if (subFacet.maxval > facet.maxval) {
-          facet.maxvalAsText = subFacet.transform.transformedMax.toString();
-        }
-      }
-    }
-  });
-}
-
-function setFacetCategories (datasets, facet) {
-  var categories = {};
-
-  // get categories by combining the sets for the separate datasets
-  datasets.forEach(function (dataset) {
-    if (dataset.isActive) {
-      var subFacet = dataset.facets.get(facet.name, 'name');
-
-      if (subFacet.isCategorial) {
-        subFacet.categorialTransform.rules.forEach(function (rule) {
-          categories[rule.expression] = rule.group;
-        });
-      } else if (subFacet.isDatetime) {
-        var groups = util.timeParts.get(subFacet.datetimeTransform.transformedFormat, 'description').groups;
-        groups.forEach(function (group) {
-          categories[group] = group;
-        });
-      } else {
-        console.error('Not implemented');
-      }
-    }
-  });
-
-  facet.categorialTransform.reset();
-  Object.keys(categories).forEach(function (cat) {
-    facet.categorialTransform.rules.add({
-      expression: cat,
-      count: 0, // FIXME
-      group: categories[cat]
-    });
-  });
-}
-
 /**
  * Reset min, max, and categories for all facets in the dataview
  * @param {Spot} me Main spot instance
@@ -178,9 +121,9 @@ function resetDataview (me) {
     var newFacet = me.dataview.facets.get(facet.name, 'name');
 
     if (newFacet.isContinuous || newFacet.isDatetime || newFacet.isDuration) {
-      setFacetMinMax(me.datasets, facet);
+      setFacetMinMax(facet);
     } else if (newFacet.isCategorial) {
-      setFacetCategories(me.datasets, facet);
+      setFacetCategories(facet);
     }
   });
 }
@@ -351,6 +294,65 @@ function toggleDataset (dataset) {
   resetDataview(this);
 }
 
+function setFacetMinMax (facet) {
+  // This should work for all kinds of facets:
+  // numbers, durations, and datatimes all implement the relevant operations
+  var datasets = this.datasets;
+
+  var first = true;
+  datasets.forEach(function (dataset) {
+    if (dataset.isActive) {
+      var subFacet = dataset.facets.get(facet.name, 'name');
+      if (first) {
+        facet.minvalAsText = subFacet.transform.transformedMin.toString();
+        facet.maxvalAsText = subFacet.transform.transformedMax.toString();
+        first = false;
+      } else {
+        if (subFacet.minval < facet.minval) {
+          facet.minvalAsText = subFacet.transform.transformedMin.toString();
+        }
+        if (subFacet.maxval > facet.maxval) {
+          facet.maxvalAsText = subFacet.transform.transformedMax.toString();
+        }
+      }
+    }
+  });
+}
+
+function setFacetCategories (facet) {
+  var datasets = this.datasets;
+  var categories = {};
+
+  // get categories by combining the sets for the separate datasets
+  datasets.forEach(function (dataset) {
+    if (dataset.isActive) {
+      var subFacet = dataset.facets.get(facet.name, 'name');
+
+      if (subFacet.isCategorial) {
+        subFacet.categorialTransform.rules.forEach(function (rule) {
+          categories[rule.expression] = rule.group;
+        });
+      } else if (subFacet.isDatetime) {
+        var groups = util.timeParts.get(subFacet.datetimeTransform.transformedFormat, 'description').groups;
+        groups.forEach(function (group) {
+          categories[group] = group;
+        });
+      } else {
+        console.error('Not implemented');
+      }
+    }
+  });
+
+  facet.categorialTransform.reset();
+  Object.keys(categories).forEach(function (cat) {
+    facet.categorialTransform.rules.add({
+      expression: cat,
+      count: 0, // FIXME
+      group: categories[cat]
+    });
+  });
+}
+
 module.exports = BaseModel.extend({
   type: 'user',
   props: {
@@ -420,5 +422,20 @@ module.exports = BaseModel.extend({
     }
   },
   connectToServer: connectToServer,
+  setFacetMinMax: setFacetMinMax,
+  setFacetCategories: setFacetCategories,
   toggleDataset: toggleDataset
 });
+
+module.exports.util = {
+  dx: utildx,
+  misval: require('./util/misval'),
+  time: util
+};
+
+module.exports.transforms = {
+  categorial: require('./facet/categorial-transform'),
+  continuous: require('./facet/continuous-transform'),
+  datetime: require('./facet/datetime-transform'),
+  duration: require('./facet/duration-transform')
+};
