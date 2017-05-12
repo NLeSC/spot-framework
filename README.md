@@ -4,8 +4,13 @@
 [![Codacy Badge](https://api.codacy.com/project/badge/Coverage/783828d8433a49a8b33dfa3874e46f76)](https://www.codacy.com/app/NLeSC/spot-framework?utm_source=github.com&utm_medium=referral&utm_content=NLeSC/spot-framework&utm_campaign=Badge_Coverage)
 [![js-semistandard-style](https://img.shields.io/badge/code%20style-semistandard-brightgreen.svg?style=flat-square)](https://github.com/Flet/semistandard)
 
-Group, bin, combine, and aggregate datasets for visual analytics using a single API.
-It can be used fully client side, via crossfilter, or it can use a PostgreSQL database using the `spot-server`.
+Group, bin, combine, and aggregate high dimensional datasets for interactive visual analytics.
+Define simple (lower dimensional) cross sections of your data, called filters.
+Filters partition (bin) the data and can do aggregations (sums, averages, standard deviations, etc).
+The result is returned as a simple array which you can plot or analyze (see also the other SPOT projects).
+All filters are linked and update automatically.
+
+Using a single API, it can run fully client side, via crossfilter, or it can use a PostgreSQL database using the `spot-server`.
 
 ## How to install
 

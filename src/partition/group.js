@@ -1,5 +1,5 @@
 /**
- * A `Group` represents a value a `Facet` can take:
+ * A `Group` represents a value a `Facet` can take using a partitioning.
  * For continuous or time facets, it represents an interval.
  * For categorial facets, it is a single label.
  *

@@ -32,7 +32,7 @@
   "semistandard": {
     "ignore": [
       "/dist",
-      "/doc"
+      "/docs"
     ]
   },
   "devDependencies": {
