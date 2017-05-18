@@ -207,12 +207,11 @@ module.exports = Base.extend({
    */
   initDataFilter: function () {
     var dataview = this.collection.parent;
-    var me = dataview.parent;
-    var driver = me.driver;
+    var spot = dataview.parent;
 
-    driver.releaseDataFilter(dataview, this);
-    driver.initDataFilter(dataview, this);
-    driver.updateDataFilter(this);
+    spot.driver.releaseDataFilter(dataview, this);
+    spot.driver.initDataFilter(dataview, this);
+    spot.driver.updateDataFilter(this);
 
     this.isInitialized = true;
   },
@@ -224,10 +223,9 @@ module.exports = Base.extend({
    */
   releaseDataFilter: function () {
     var dataview = this.collection.parent;
-    var me = dataview.parent;
-    var driver = me.driver;
+    var spot = dataview.parent;
 
-    driver.releaseDataFilter(dataview, this);
+    spot.driver.releaseDataFilter(dataview, this);
 
     this.isInitialized = false;
   },
@@ -238,11 +236,8 @@ module.exports = Base.extend({
    */
   updateDataFilter: function () {
     var dataview = this.collection.parent;
-    var me = dataview.parent;
-    var driver = me.driver;
+    var spot = dataview.parent;
 
-    driver.updateDataFilter(this);
-
-    dataview.getData();
+    spot.driver.updateDataFilter(this);
   }
 });

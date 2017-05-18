@@ -12,8 +12,6 @@
  * @module driver/client
  */
 var moment = require('moment-timezone');
-var Crossfilter = require('crossfilter2');
-var Dataset = require('../dataset');
 
 var utildx = require('../util/crossfilter');
 var misval = require('../util/misval');
@@ -23,6 +21,7 @@ var aggRankToName = {1: 'aa', 2: 'bb', 3: 'cc', 4: 'dd', 5: 'ee'};
 
 /**
  * setMinMax sets the range of a continuous or time facet
+ *
  * @param {Dataset} dataset
  * @param {Facet} facet
  */
@@ -32,8 +31,6 @@ function setMinMax (dataset, facet) {
 
   // to be able to mark the value as missing we need it unprocessed, so rawValueFn
   var rawValFn = utildx.rawValueFn(facet);
-
-  var group = dataset.crossfilter.groupAll();
 
   var lessFn;
   var moreFn;
@@ -45,111 +42,55 @@ function setMinMax (dataset, facet) {
     moreFn = function (a, b) { return (b === misval || a > b); };
   }
 
-  group.reduce(
-    // add
-    function (p, d) {
-      var rawV = rawValFn(d);
-      var v = valFn(d);
-      if (v === misval) {
-        return p;
+  var minval = misval;
+  var rawMin = misval;
+
+  var maxval = misval;
+  var rawMax = misval;
+
+  dataset.data.forEach(function (d) {
+    var rawV = rawValFn(d);
+    var v = valFn(d);
+
+    if (v !== misval) {
+      if (lessFn(v, minval)) {
+        minval = v;
+        rawMin = rawV;
       }
-      if (lessFn(v, p.min)) {
-        p.min = v;
-        p.rawMin = rawV;
+      if (moreFn(v, maxval)) {
+        maxval = v;
+        rawMax = rawV;
       }
-      if (moreFn(v, p.max)) {
-        p.max = v;
-        p.rawMax = rawV;
-      }
-      return p;
-    },
-    // subtract
-    function (p, v) {
-      return p;
-    },
-    // initialize
-    function () {
-      return {
-        min: misval,
-        max: misval,
-        rawMin: misval,
-        rawMax: misval
-      };
     }
-  );
-  var value = group.value();
-  if (value.min !== misval) {
+  });
+
+  if (minval !== misval) {
     if (facet.isContinuous) {
-      facet.minvalAsText = value.min.toString();
+      facet.minvalAsText = minval.toString();
     } else if (facet.isDatetime) {
-      facet.minvalAsText = value.min.toISOString();
+      facet.minvalAsText = minval.toISOString();
     } else if (facet.isDuration) {
-      facet.minvalAsText = value.min.toISOString();
+      facet.minvalAsText = minval.toISOString();
     }
-    facet.rawMinval = value.rawMin;
+    facet.rawMinval = rawMin;
   } else {
     facet.minvalAsText = '';
     facet.rawMinval = misval;
   }
 
-  if (value.max !== misval) {
+  if (maxval !== misval) {
     if (facet.isContinuous) {
-      facet.maxvalAsText = value.max.toString();
+      facet.maxvalAsText = maxval.toString();
     } else if (facet.isDatetime) {
-      facet.maxvalAsText = value.max.toISOString();
+      facet.maxvalAsText = maxval.toISOString();
     } else if (facet.isDuration) {
-      facet.maxvalAsText = value.max.toISOString();
+      facet.maxvalAsText = maxval.toISOString();
     }
-    facet.rawMaxval = value.rawMax;
+    facet.rawMaxval = rawMax;
   } else {
     facet.maxvalAsText = '';
     facet.rawMaxval = misval;
   }
-  group.dispose();
-}
-
-/**
- * sampleDataset returns an array containing N random datums from the dataset
- * @param {Dataset} dataset
- * @param {intger} N Number of elements to pick
- * @returns {Object[]} Array N data Objects
- */
-function sampleDataset (dataset, N) {
-  var wantedElements = [];
-
-  var i;
-  for (i = 0; i < N; i++) {
-    wantedElements[i] = Math.round(Math.random() * dataset.crossfilter.size());
-  }
-
-  var group = dataset.crossfilter.groupAll();
-  group.reduce(
-    // add
-    function (p, d) {
-      var i = wantedElements.indexOf(p.element);
-      if (i > -1) {
-        p.data[i] = d;
-      }
-      p.element++;
-      return p;
-    },
-    // subtract
-    function (p, v) {
-      return p;
-    },
-    // initialize
-    function () {
-      return {
-        element: 0,
-        data: []
-      };
-    }
-  );
-
-  var data = group.value().data;
-  group.dispose();
-
-  return data;
 }
 
 /**
@@ -163,55 +104,34 @@ function setCategories (dataset, facet) {
   // we need the value just before a transformation, so baseValueFn
   var valFn = utildx.baseValueFn(facet);
 
-  var group = dataset.crossfilter.groupAll();
-  group.reduce(
-    // add
-    function (p, v) {
-      var vals = valFn(v);
-      if (vals instanceof Array) {
-        vals.forEach(function (val) {
-          if (p.hasOwnProperty(val)) {
-            p[val]++;
-          } else {
-            p[val] = 1;
-          }
-        });
-      } else {
-        if (p.hasOwnProperty(vals)) {
-          p[vals]++;
+  var p = {};
+  dataset.data.forEach(function (d) {
+    var vals = valFn(d);
+    if (vals instanceof Array) {
+      vals.forEach(function (val) {
+        if (p.hasOwnProperty(val)) {
+          p[val]++;
         } else {
-          p[vals] = 1;
+          p[val] = 1;
         }
-      }
-      return p;
-    },
-    // subtract
-    function (p, v) {
-      var vals = valFn(v);
-      if (vals instanceof Array) {
-        vals.forEach(function (val) {
-          p[val]--;
-        });
+      });
+    } else {
+      if (p.hasOwnProperty(vals)) {
+        p[vals]++;
       } else {
-        p[vals]--;
+        p[vals] = 1;
       }
-      return p;
-    },
-    // initialize
-    function () {
-      return {};
     }
-  );
+  });
 
   facet.categorialTransform.reset();
 
-  var data = group.value();
-  Object.keys(data).forEach(function (key) {
+  Object.keys(p).forEach(function (key) {
     // TODO: missing data should be mapped to a misval from misvalAsText
     var keyAsString = key.toString();
     var groupAsString = keyAsString;
 
-    facet.categorialTransform.rules.add({expression: keyAsString, count: data[key], group: groupAsString});
+    facet.categorialTransform.rules.add({expression: keyAsString, count: p[key], group: groupAsString});
   });
 }
 
@@ -220,21 +140,42 @@ function setCategories (dataset, facet) {
  * to an approximate percentile mapping.
  * Use the recommended method from [NIST](http://www.itl.nist.gov/div898/handbook/prc/section2/prc262.htm)
  * See also the discussion on [Wikipedia](https://en.wikipedia.org/wiki/Percentile)
+ *
+ * @param {Dataset} dataset
  * @param {Facet} facet
  */
 function setPercentiles (dataset, facet) {
   // we need the value just before a transformation, so baseValueFn
   var basevalueFn = utildx.baseValueFn(facet);
-  var dimension = dataset.crossfilter.dimension(basevalueFn);
-  var data = dimension.bottom(Infinity);
-  dimension.dispose();
+  var data = dataset.data;
+
+  data.sort(function (a, b) {
+    var valA = basevalueFn(a);
+    var valB = basevalueFn(b);
+
+    if (valA === valB) {
+      return 0;
+    }
+    if (valA === misval) {
+      return -1;
+    }
+    if (valB === misval) {
+      return 1;
+    }
+
+    if (valA < valB) {
+      return -1;
+    } else {
+      return 1;
+    }
+  });
 
   var tf = facet.continuousTransform;
   var x, i;
 
   // drop missing values, which should be sorted at the start of the array
   i = 0;
-  while (basevalueFn(data[i]) === misval) {
+  while (basevalueFn(data[i]) === misval && i < data.length) {
     i++;
   }
   data.splice(0, i);
@@ -393,7 +334,7 @@ function scan (dataset) {
   }
 
   // Add facets
-  var data = sampleDataset(dataset, 10);
+  var data = dataset.data.slice(0, 10);
   data.forEach(function (d) {
     recurse(dataset.facets, data, '', d);
   });
@@ -409,16 +350,16 @@ function scan (dataset) {
 
 /**
  * Initialize the data filter, and construct the getData callback function on the filter.
- * @param {Dataset} dataset
+ * @param {Dataview} dataview
  * @param {Filter} filter
  */
-function initDataFilter (dataset, filter) {
+function initDataFilter (dataview, filter) {
   var facet;
 
   // use the partitions as groups:
   var groupFns = [];
   filter.partitions.forEach(function (partition) {
-    facet = dataset.facets.get(partition.facetName, 'name');
+    facet = dataview.facets.get(partition.facetName, 'name');
     var valueFn = utildx.valueFn(facet);
     var groupFn = utildx.groupFn(partition);
 
@@ -464,27 +405,15 @@ function initDataFilter (dataset, filter) {
   var aggregateFns = [];
   var aggregateRanks = [];
   var reduceFns = [];
-  if (filter.aggregates.length === 0) {
-    // fall back to just counting item
-    aggregateFns[0] = function (d) { return 1; };
-    aggregateRanks[0] = 1;
-    reduceFns[0] = function (d) {
-      if (d === misval || d == null) {
-        return misval;
-      }
-      return d.count > 0 ? d.count : misval;
-    };
-  } else {
-    filter.aggregates.forEach(function (aggregate) {
-      facet = dataset.facets.get(aggregate.facetName, 'name');
-      aggregateRanks.push(aggregate.rank);
-      aggregateFns.push(utildx.valueFn(facet));
-      reduceFns.push(utildx.reduceFn(aggregate));
-    });
-  }
+  filter.aggregates.forEach(function (aggregate) {
+    facet = dataview.facets.get(aggregate.facetName, 'name');
+    aggregateRanks.push(aggregate.rank);
+    aggregateFns.push(utildx.valueFn(facet));
+    reduceFns.push(utildx.reduceFn(aggregate));
+  });
 
   // setup the crossfilter dimensions and groups
-  filter.dimension = dataset.crossfilter.dimension(function (d) {
+  filter.dimension = dataview.crossfilter.dimension(function (d) {
     return groupsKeys(d);
   }, true);
   var group = filter.dimension.group(function (d) { return d; });
@@ -492,6 +421,11 @@ function initDataFilter (dataset, filter) {
   group.reduce(
     // add
     function (p, d) {
+      if (aggregateFns.length === 0) {
+        p[0] = p[0] ? p[0] : {count: 0};
+        p[0].count += 1;
+      }
+
       aggregateFns.forEach(function (aggregateFn, i) {
         var val = aggregateFn(d);
         if (val !== misval) {
@@ -506,6 +440,11 @@ function initDataFilter (dataset, filter) {
     },
     // subtract
     function (p, d) {
+      if (aggregateFns.length === 0) {
+        p[0] = p[0] ? p[0] : {count: 0};
+        p[0].count -= 1;
+      }
+
       aggregateFns.forEach(function (aggregateFn, i) {
         var val = aggregateFn(d);
         if (val !== misval) {
@@ -567,18 +506,18 @@ function initDataFilter (dataset, filter) {
     });
 
     // update counts
-    dataset.dataTotal = dataset.crossfilter.size();
-    dataset.dataSelected = dataset.countGroup.value();
+    dataview.dataTotal = dataview.crossfilter.size();
+    dataview.dataSelected = dataview.countGroup.value();
   };
 }
 
 /**
  * The opposite or initDataFilter, it should remove the filter and deallocate other configuration
  * related to the filter.
- * @param {Dataset} dataset
+ * @param {Dataview} dataview
  * @param {Filter} filter
  */
-function releaseDataFilter (dataset, filter) {
+function releaseDataFilter (dataview, filter) {
   if (filter.dimension) {
     filter.dimension.filterAll();
     filter.dimension.dispose();
@@ -597,23 +536,27 @@ function updateDataFilter (filter) {
   }
 }
 
+/**
+ * Get data for every filter, and trigger a 'newData' event
+ * @param {Dataview} dataview
+ */
+function getData (dataview) {
+  dataview.filters.forEach(function (filter) {
+    if (filter.isInitialized) {
+      filter.getData();
+      filter.trigger('newData');
+    }
+  });
+}
+
 module.exports = {
-  initialize: function () {
-    // first do parent class initialization
-    Dataset.prototype.initialize.apply(this, arguments);
-
-    /**
-     * Crossfilter instance, see [here](http://square.github.io/crossfilter/)
-     */
-    this.crossfilter = new Crossfilter([]);
-    this.countGroup = this.crossfilter.groupAll().reduceCount();
-  },
-
+  driverType: 'client',
   scan: scan,
   setMinMax: setMinMax,
   setCategories: setCategories,
   setPercentiles: setPercentiles,
   initDataFilter: initDataFilter,
   releaseDataFilter: releaseDataFilter,
-  updateDataFilter: updateDataFilter
+  updateDataFilter: updateDataFilter,
+  getData: getData
 };

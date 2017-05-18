@@ -1,42 +1,42 @@
 /**
  * A Dataview is a join of Datasets
  *
- * @extends Dataset
  * @class Dataview
+ * @extends Base
  */
-var Dataset = require('./dataset');
+var Crossfilter = require('crossfilter2'); // TODO: only for client side datasets
+var BaseModel = require('./util/base');
 var Filters = require('./filter/collection');
+var Facets = require('./facet/collection');
 
 function getData () {
   if (this.isPaused) {
     return;
   }
 
-  var me = this.parent;
+  var spot = this.parent;
 
-  if (me.sessionType === 'server') {
-    console.log('spot-server: getData');
-
-    this.socket.emit('getData', {
-      datasets: this.parent.datasets.toJSON(),
-      dataview: this.toJSON()
-    }, this);
-  } else if (me.sessionType === 'client') {
-    this.filters.forEach(function (filter) {
-      if (filter.isInitialized) {
-        filter.getData();
-        filter.trigger('newData');
-      }
-    });
-  } else {
-    console.error('Session type not implemented for this dataview');
-  }
+  spot.driver.getData(this);
 }
 
-module.exports = Dataset.extend({
+module.exports = BaseModel.extend({
+  initialize: function () {
+    // first do parent class initialization
+    BaseModel.prototype.initialize.apply(this, arguments);
+
+    /**
+     * Crossfilter instance, see [here](http://square.github.io/crossfilter/)
+     * used for client side data handling.
+     *
+     * @memberof! Dataset
+     */
+    this.crossfilter = new Crossfilter([]);
+    this.countGroup = this.crossfilter.groupAll().reduceCount();
+  },
   props: {
     /**
      * Total number of datapoints in the current dataview
+     *
      * @memberof! Dataview
      * @readonly
      * @type {number}
@@ -44,11 +44,24 @@ module.exports = Dataset.extend({
     dataTotal: ['number', true, 0],
     /**
      * Number of datapoints that are currently selected
+     *
      * @memberof! Dataview
      * @readonly
      * @type {number}
      */
-    dataSelected: ['number', true, 0]
+    dataSelected: ['number', true, 0],
+    /**
+     * DatasetId's of active datasets
+     *
+     * @memberof! Dataview
+     * @type {String[]}
+     */
+    datasetIds: {
+      type: 'array',
+      default: function () {
+        return [];
+      }
+    }
   },
   session: {
     /**
@@ -62,7 +75,15 @@ module.exports = Dataset.extend({
   },
   collections: {
     /**
+     * A Facet collection holding pre defined facets
+     *
+     * @memberof! Dataview
+     * @type {Facet[]}
+     */
+    facets: Facets,
+    /**
      * A Filter collection holding all active filters on the dataview
+     *
      * @memberof! Dataview
      * @type {Filter[]}
      */
@@ -71,14 +92,16 @@ module.exports = Dataset.extend({
   /**
    * Pause the dataview. This means calls to getData are blocked.
    * Useful when updating a lot of filters and you are not interested in the intermediate state.
-   * @memberof Dataview
+   *
+   * @memberof! Dataview
    */
   pause: function () {
     this.isPaused = true;
   },
   /**
    * Unpause the dataview.
-   * @memberof Dataview
+   *
+   * @memberof! Dataview
    */
   play: function () {
     this.isPaused = false;
@@ -86,7 +109,9 @@ module.exports = Dataset.extend({
 
   /**
    * Get data for all filters linked to this dataview.
-   * When data has become available, a `newData` event is triggered on the filter.
+   * When data has become available for a filter, a `newData` event is triggered on that filter.
+   *
+   * @memberof! Dataview
    */
   getData: getData
 });

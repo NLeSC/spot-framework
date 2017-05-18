@@ -16,21 +16,31 @@
 
 /**
  * Autoconfigure a dataset
+ *
+ * @param {Dataset} dataset
  */
-function scan () {
-  console.log('spot-server: scanData');
-  this.socket.emit('scanData', {
-    dataset: this.toJSON()
+function scan (dataset) {
+  // Dataset -> Datasets -> Spot
+  var spot = dataset.collection.parent;
+
+  console.log('emit: scanData');
+  spot.socket.emit('scanData', {
+    datasetID: dataset.toJSON()
   });
 }
 
 /**
  * setMinMax sets the range of a continuous or time facet
+ *
+ * @param {Dataset} dataset
  * @param {Facet} facet
  */
-function setMinMax (facet) {
-  console.log('spot-server: setMinMax');
-  this.socket.emit('setMinMax', {
+function setMinMax (dataset, facet) {
+  // Dataset -> Datasets -> Spot
+  var spot = dataset.collection.parent;
+
+  console.log('emit: setMinMax');
+  spot.socket.emit('setMinMax', {
     dataset: this.toJSON(),
     facetId: facet.getId()
   });
@@ -40,12 +50,16 @@ function setMinMax (facet) {
  * setCategories finds finds all values on an ordinal (categorial) axis
  * Updates the categorialTransform of the facet
  *
+ * @param {Dataset} dataset
  * @param {Facet} facet
  */
-function setCategories (facet) {
-  console.log('spot-server: setCategories');
+function setCategories (dataset, facet) {
+  // Dataset -> Datasets -> Spot
+  var spot = dataset.collection.parent;
+
   facet.categorialTransform.rules.reset();
-  this.socket.emit('setCategories', {
+  console.log('emit: setCategories');
+  spot.socket.emit('setCategories', {
     dataset: this.toJSON(),
     facetId: facet.getId()
   });
@@ -53,11 +67,16 @@ function setCategories (facet) {
 
 /**
  * Calculate 100 percentiles (ie. 1,2,3,4 etc.), and initialize the `facet.continuousTransform`
+ *
+ * @param {Dataset} dataset
  * @param {Facet} facet
  */
-function setPercentiles (facet) {
-  console.log('spot-server: setPercentiles' + facet.getId());
-  this.socket.emit('setPercentiles', {
+function setPercentiles (dataset, facet) {
+  // Dataset -> Datasets -> Spot
+  var spot = dataset.collection.parent;
+
+  console.log('emit: setPercentiles');
+  spot.socket.emit('setPercentiles', {
     dataset: this.toJSON(),
     facetId: facet.getId()
   });
@@ -65,12 +84,11 @@ function setPercentiles (facet) {
 
 /**
  * Initialize the data filter, and construct the getData callback function on the filter.
- * @param {Dataset} dataset
+ * @param {Dataview} dataview
  * @param {Filter} filter
  */
-function initDataFilter (dataset, filter) {
-  console.log('spot-server: getData for filter ' + filter.getId());
-  this.getAllData();
+function initDataFilter (dataview, filter) {
+  // as the SQL server implementation is stateless, nothing to do here
 }
 
 /**
@@ -79,10 +97,7 @@ function initDataFilter (dataset, filter) {
  * @param {Filter} filter
  */
 function releaseDataFilter (filter) {
-  filter.getData = function () {
-    var data = [];
-    filter.data = data;
-  };
+  // as the SQL server implementation is stateless, nothing to do here
 }
 
 /**
@@ -93,12 +108,27 @@ function updateDataFilter (filter) {
   // as the SQL server implementation is stateless, nothing to do here
 }
 
+/**
+ * Get data for every filter, and trigger a 'newData' event
+ * @param {Dataview} dataview
+ */
+function getData (dataview) {
+  var spot = dataview.parent;
+
+  spot.socket.emit('getData', {
+    datasets: spot.datasets.toJSON(),
+    dataview: dataview.toJSON()
+  }, this);
+}
+
 module.exports = {
+  driverType: 'server',
   scan: scan,
   setMinMax: setMinMax,
   setCategories: setCategories,
   setPercentiles: setPercentiles,
   initDataFilter: initDataFilter,
   releaseDataFilter: releaseDataFilter,
-  updateDataFilter: updateDataFilter
+  updateDataFilter: updateDataFilter,
+  getData: getData
 };

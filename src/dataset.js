@@ -41,9 +41,9 @@ module.exports = BaseModel.extend({
       required: true,
       default: 'URL'
     },
-    // TODO: only for server side datasets
     /**
-     * Database table name for server datasets, indicate table joins with a pipe: '|'
+     * Database table name for server datasets
+     * @memberof! Dataset
      * @type {string}
      */
     databaseTable: {
@@ -72,7 +72,11 @@ module.exports = BaseModel.extend({
      * For searching through datasets URL and description.
      * True if this dataset matches the search paramters.
      */
-    show: ['boolean', true, true]
+    show: ['boolean', true, true],
+    data: {
+      type: 'array',
+      default: function () { return []; }
+    }
   },
   collections: {
     /**
@@ -83,9 +87,9 @@ module.exports = BaseModel.extend({
     facets: Facets
   },
   scan: function () {
-    var dataset = this;
-    var datasets = dataset.collection;
-    var spot = datasets.parent;
-    spot.driver.scan(dataset);
+    // Dataset -> Datasets -> spot
+    var spot = this.collection.parent;
+
+    spot.driver.scan(this);
   }
 });

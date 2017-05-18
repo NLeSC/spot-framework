@@ -280,7 +280,7 @@ describe('crossfilter utility functions', function () {
     dataset.facets.add(facet);
 
     function addPoint (x) {
-      dataset.crossfilter.add([{'a': x}]);
+      dataset.data.push({'a': x});
     }
 
     var i;

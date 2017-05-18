@@ -315,9 +315,9 @@ module.exports = BaseModel.extend({
       spot = this.collection.parent.parent;
       spot.setFacetMinMax(this);
     } else if (ancestor instanceof Dataset) {
-      // Facet -> Facets -> Dataset -> Datasets -> Spot
-      spot = this.collection.parent.collection.parent;
-      spot.driver.setMinMax(this);
+      // Dataset -> Datasets -> Spot
+      spot = ancestor.collection.parent;
+      spot.driver.setMinMax(ancestor, this);
     }
   },
   /**
@@ -341,9 +341,8 @@ module.exports = BaseModel.extend({
       spot.setFacetCategories(this);
     } else if (ancestor instanceof Dataset) {
       // Facet -> Facets -> Dataset -> Datasets -> Spot
-      spot = this.collection.parent.collection.parent;
-      spot.driver.setCategories(this);
+      spot = ancestor.collection.parent;
+      spot.driver.setCategories(ancestor, this);
     }
-    this.collection.parent.setCategories(this);
   }
 });

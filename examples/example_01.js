@@ -1,4 +1,4 @@
-var Spot = require('.');
+var Spot = require('..');
 
 // get a new Spot instance
 var spot = new Spot();
@@ -16,7 +16,7 @@ var mydata = [
   { firstName: 'Dee', lastName: 'Jones', age: 5 },
   { firstName: 'Doo', lastName: 'Jones', age: 9 }
 ];
-dataset.crossfilter.add(mydata);
+dataset.data = mydata;
 console.log('Starting with:');
 console.log(mydata);
 
@@ -77,3 +77,5 @@ partition.updateSelection({
   value: 'Jones'
 });
 filterA.updateDataFilter();
+
+dataview.getData();

@@ -202,11 +202,10 @@ function setGroups () {
  */
 function reset (options) {
   var partition = this;
-  // partition -> partitions -> filter -> filters -> dataset
+  // partition -> partitions -> filter -> filters -> dataview
   var filter = partition.collection.parent;
-  var dataset = filter.collection.parent;
-  var facet = dataset.facets.get(partition.facetName, 'name');
-
+  var dataview = filter.collection.parent;
+  var facet = dataview.facets.get(partition.facetName, 'name');
   options = options || {};
 
   partition.set({

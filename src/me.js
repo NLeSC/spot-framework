@@ -10,63 +10,53 @@ var driverClient = require('./driver/client');
 var driverServer = require('./driver/server');
 var utildx = require('./util/crossfilter');
 var util = require('./util/time');
-var socketIO = require('socket.io-client');
+var io = require('socket.io-client');
 
 /**
- * Connect to the spot-server using a websocket on port 3080 and setup callbacks
+ * Connect to the spot-server using a websocket and setup callbacks
  *
  * @function
- * @params {string} address URL of server, implicitly uses port 3080.
+ * @params {string} address URL of server
  *
  * @memberof! Spot
  */
 function connectToServer (address) {
   var me = this;
-  this.address = address;
+  if (address) {
+    this.address = address;
+  } else {
+    address = this.address;
+  }
 
-  var socket = socketIO(address + ':3080');
+  if (!address) {
+    console.error('Cannot connect to server without server address');
+    return;
+  }
+
+  var socket = io.connect(address);
 
   socket.on('connect', function () {
-    console.log('spot-server: connected');
     me.isConnected = true;
   });
 
   socket.on('disconnect', function () {
-    console.log('spot-server: disconnected');
     me.isConnected = false;
   });
 
-  socket.on('syncDatasets', function (data) {
-    console.log('spot-server: syncDatasets');
-    me.datasets.reset(data);
+  socket.on('syncDatasets', function (req) {
+    me.datasets.reset(req.data);
   });
 
-  socket.on('syncDataset', function (data) {
-    console.log('spot-server: syncDataset');
-    me.dataview.reset(data);
-  });
-
-  socket.on('syncFilters', function (data) {
-    console.log('spot-server: syncFilters');
-    me.dataview.filters.add(data, {merge: true});
+  socket.on('syncDataview', function (req) {
+    me.dataview.reset(req.data);
   });
 
   socket.on('syncFacets', function (req) {
-    console.log('spot-server: syncFacets');
-    var dataset;
-    if (req.datasetId === me.dataview.getId()) {
-      dataset = me.dataview;
-    } else {
-      dataset = me.datasets.get(req.datasetId);
-    }
-
-    if (dataset && req.data) {
-      dataset.facets.add(req.data, {merge: true});
-    }
+    var dataset = me.datasets.get(req.datasetId);
+    dataset.facets.reset(req.data);
   });
 
   socket.on('newData', function (req) {
-    console.log('spot-server: newData ' + req.filterId);
     var filter = me.dataview.filters.get(req.filterId);
     if (req.data) {
       filter.data = req.data;
@@ -98,15 +88,24 @@ function connectToServer (address) {
   });
 
   socket.on('newMetaData', function (req) {
-    console.log('spot-server: newMetaData');
     me.dataview.dataTotal = parseInt(req.dataTotal);
     me.dataview.dataSelected = parseInt(req.dataSelected);
   });
 
-  console.log('spot-server: connecting');
   socket.connect();
-
   me.socket = socket;
+}
+
+/**
+ * Disconnect from the spot-server
+ *
+ * @function
+ * @memberof! Spot
+ */
+function disconnectFromServer () {
+  var me = this;
+
+  me.socket.disconnect();
 }
 
 /**
@@ -121,19 +120,19 @@ function resetDataview (me) {
     var newFacet = me.dataview.facets.get(facet.name, 'name');
 
     if (newFacet.isContinuous || newFacet.isDatetime || newFacet.isDuration) {
-      setFacetMinMax(facet);
+      me.setFacetMinMax(facet);
     } else if (newFacet.isCategorial) {
-      setFacetCategories(facet);
+      me.setFacetCategories(facet);
     }
   });
 }
 
 /*
  * Add or remove facets from a dataset to the global (merged) dataset
- * @param {Spot} me Main spot instance
- * @param {Dataset} dataset Dataset set add or remove
  *
  * @memberof! Spot
+ * @param {Spot} me Main spot instance
+ * @param {Dataset} dataset Dataset set add or remove
  */
 function toggleDatasetFacets (me, dataset) {
   if (dataset.isActive) {
@@ -185,10 +184,10 @@ function toggleDatasetFacets (me, dataset) {
 
 /*
  * Add or remove data from a dataset to the global (merged) dataset
- * @param {Spot} me Main spot instance
- * @param {Dataset} dataset Dataset set add or remove
  *
  * @memberof! Spot
+ * @param {Spot} me Main spot instance
+ * @param {Dataset} dataset Dataset set add or remove
  */
 function toggleDatasetData (me, dataset) {
   if (dataset.isActive) {
@@ -233,7 +232,7 @@ function toggleDatasetData (me, dataset) {
     });
 
     // ...transform data
-    var data = dataset.crossfilter.all();
+    var data = dataset.data;
     var transformedData = [];
 
     data.forEach(function (datum) {
@@ -262,29 +261,27 @@ function toggleDatasetData (me, dataset) {
  * @memberof! Spot
  */
 function toggleDataset (dataset) {
-  var tables = [];
-
-  if (this.isConnected) {
-    // for server side datasets, keep track of the database tables
-
-    // 1. all other active datasets
-    this.datasets.forEach(function (d) {
-      if (d.isActive && d !== dataset) {
-        tables.push(d.databaseTable);
-      }
-    });
-    // 2. this dataset
-    if (!dataset.isActive) {
-      tables.push(dataset.databaseTable);
+  // Update the list of active datasets in the dataview
+  if (dataset.isActive) {
+    // remove datasetId
+    var i = this.dataview.datasetIds.indexOf(dataset.getId());
+    if (i > 0) {
+      this.dataview.datasetIds.splice(i, 1);
     }
-    this.dataview.databaseTable = tables.join('|');
+  } else {
+    // add datasetId
+    this.dataview.datasetIds.push(dataset.getId());
+  }
+
+  if (this.sessionType === 'server') {
     toggleDatasetFacets(this, dataset);
   } else {
     // release all filters
     this.dataview.filters.forEach(function (filter) {
       filter.releaseDataFilter();
     });
-    // for client side datasets, manually merge the datasets
+
+    // manually merge the datasets
     toggleDatasetFacets(this, dataset);
     toggleDatasetData(this, dataset);
   }
@@ -407,21 +404,22 @@ module.exports = BaseModel.extend({
     // first do parent class initialization
     BaseModel.prototype.initialize.apply(this, arguments);
 
+    // default to client side (crossfilter) sessions
+    this.driver = driverClient;
+
     // assign backend driver
-    if (arguments.sessionType) {
-      if (arguments.sessionType === 'client') {
+    if (arguments && arguments[0] && arguments[0].sessionType) {
+      if (arguments[0].sessionType === 'client') {
         this.driver = driverClient;
-      } else if (arguments.sessionType === 'server') {
+      } else if (arguments[0].sessionType === 'server') {
         this.driver = driverServer;
       } else {
-        console.error('No driver for type', arguments.sessionType);
+        console.error('No driver for type', arguments[0].sessionType);
       }
-    } else {
-      // default to client side (crossfilter) sessions
-      this.driver = driverClient;
     }
   },
   connectToServer: connectToServer,
+  disconnectFromServer: disconnectFromServer,
   setFacetMinMax: setFacetMinMax,
   setFacetCategories: setFacetCategories,
   toggleDataset: toggleDataset
@@ -438,4 +436,10 @@ module.exports.transforms = {
   continuous: require('./facet/continuous-transform'),
   datetime: require('./facet/datetime-transform'),
   duration: require('./facet/duration-transform')
+};
+
+module.exports.constructors = {
+  Dataview: Dataview,
+  Dataset: require('./dataset'),
+  Datasets: Datasets
 };
