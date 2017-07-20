@@ -9,7 +9,7 @@ var Datasets = require('./dataset/collection');
 var driverClient = require('./driver/client');
 var driverServer = require('./driver/server');
 var utildx = require('./util/crossfilter');
-var util = require('./util/time');
+var timeUtil = require('./util/time');
 var io = require('socket.io-client');
 
 /**
@@ -330,7 +330,7 @@ function setFacetCategories (facet) {
           categories[rule.expression] = rule.group;
         });
       } else if (subFacet.isDatetime) {
-        var groups = util.timeParts.get(subFacet.datetimeTransform.transformedFormat, 'description').groups;
+        var groups = timeUtil.timeParts.get(subFacet.datetimeTransform.transformedFormat, 'description').groups;
         groups.forEach(function (group) {
           categories[group] = group;
         });
@@ -428,7 +428,7 @@ module.exports = BaseModel.extend({
 module.exports.util = {
   dx: utildx,
   misval: require('./util/misval'),
-  time: util
+  time: timeUtil
 };
 
 module.exports.transforms = {
