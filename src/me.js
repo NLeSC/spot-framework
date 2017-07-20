@@ -193,7 +193,7 @@ function toggleDatasetData (me, dataset) {
   if (dataset.isActive) {
     // if dataset is active, remove it:
     // ...clear all crossfilter filters
-    this.dataview.filters.forEach(function (filter) {
+    me.dataview.filters.forEach(function (filter) {
       // BUGFIX: when loading sessions, the dataset is not initialized properly
       // so check for it to be sure
       if (filter.dimension) {
@@ -201,7 +201,7 @@ function toggleDatasetData (me, dataset) {
       }
     });
 
-    // ...filter all data, originating from the dataset from the ataset
+    // ...filter all data, originating from the dataset from the dataset
     var dimension = me.dataview.crossfilter.dimension(function (d) {
       return d._OriginalDatasetId;
     });
