@@ -416,9 +416,9 @@ function initDataFilter (dataview, filter) {
   filter.dimension = dataview.crossfilter.dimension(function (d) {
     return groupsKeys(d);
   }, true);
-  var group = filter.dimension.group(function (d) { return d; });
+  var crossfilterGroup = filter.dimension.group(function (d) { return d; });
 
-  group.reduce(
+  crossfilterGroup.reduce(
     // add
     function (p, d) {
       if (aggregateFns.length === 0) {
@@ -467,7 +467,7 @@ function initDataFilter (dataview, filter) {
     filter.data = [];
 
     // Get data from crossfilter
-    var groups = group.all();
+    var groups = crossfilterGroup.all();
 
     // { key: "group1|group2|...",
     //   value: [ {count: agg1, sum: agg1}
