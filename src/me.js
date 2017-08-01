@@ -16,24 +16,12 @@ var io = require('socket.io-client');
  * Connect to the spot-server using a websocket and setup callbacks
  *
  * @function
- * @params {string} address URL of server
  *
  * @memberof! Spot
  */
-function connectToServer (address) {
+function connectToServer () {
   var me = this;
-  if (address) {
-    this.address = address;
-  } else {
-    address = this.address;
-  }
-
-  if (!address) {
-    console.error('Cannot connect to server without server address');
-    return;
-  }
-
-  var socket = io.connect(address);
+  var socket = io.connect();
 
   socket.on('connect', function () {
     me.isConnected = true;
@@ -353,12 +341,6 @@ function setFacetCategories (facet) {
 module.exports = BaseModel.extend({
   type: 'user',
   props: {
-    /**
-     * Spot server address
-     * @memberof! Spot
-     * @type {string}
-     */
-    address: 'string',
     /**
      * Is there a connection with a spot sever?
      * @memberof! Spot
