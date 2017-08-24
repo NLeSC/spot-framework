@@ -16,12 +16,23 @@ var io = require('socket.io-client');
  * Connect to the spot-server using a websocket and setup callbacks
  *
  * @function
+ * @param {address} Optional. IP address and port number to connect to. fi.  'http://localhost:3000'
  *
  * @memberof! Spot
  */
-function connectToServer () {
+function connectToServer (address) {
   var me = this;
-  var socket = io.connect();
+  var socket;
+
+  if (address) {
+    // connect to specified address
+    // necessary for when window.location is not availble (node.js)
+    socket = io.connect(address);
+  } else {
+    // Use socket.io fallback to autodetect address
+    // ie. when a website wants to connect, use the window.location
+    socket = io.connect();
+  }
 
   socket.on('connect', function () {
     me.isConnected = true;
