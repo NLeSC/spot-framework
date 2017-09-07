@@ -32,7 +32,7 @@
   "semistandard": {
     "ignore": [
       "/dist",
-      "/docs"
+      "/doc"
     ]
   },
   "dependencies": {
@@ -61,7 +61,7 @@
     "uglify": "browserify src/me.js  | uglifyjs --no-source-map --screw-ie8 > dist/spot-framework.min.js",
     "gh-pages": "npm run dist && git subtree push --prefix dist origin gh-pages",
     "check": "semistandard && jasmine",
-    "doc": "jsdoc -c .jsdoc.json -d doc --package package.json --readme README.md src/ src/facet src/partition src/util src/dataset src/filter src/aggregate src/driver",
+    "doc": "jsdoc -c .jsdoc.json -d docs --package package.json --readme README.md src/ src/facet src/partition src/util src/dataset src/filter src/aggregate src/driver",
     "coverage": "istanbul cover jasmine ; codacy-coverage < coverage/lcov.info",
     "test": "npm run check ; npm run coverage"
   }

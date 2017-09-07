@@ -112,6 +112,7 @@ module.exports = BaseModel.extend({
    * When data has become available for a filter, a `newData` event is triggered on that filter.
    *
    * @memberof! Dataview
+   * @function
    */
   getData: getData
 });
