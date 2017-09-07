@@ -36,6 +36,7 @@ function connectToServer (address) {
 
   socket.on('connect', function () {
     me.isConnected = true;
+    console.log('Connected to server');
   });
 
   socket.on('disconnect', function () {

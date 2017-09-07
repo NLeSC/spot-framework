@@ -65,17 +65,27 @@ module.exports = BaseModel.extend({
      * @memberof! Dataset
      * @type {boolean}
      */
-    isActive: ['boolean', true, false]
+    isActive: {
+      type: 'boolean',
+      required: true,
+      default: false
+    }
   },
   session: {
     /**
      * For searching through datasets URL and description.
      * True if this dataset matches the search paramters.
      */
-    show: ['boolean', true, true],
+    show: {
+      type: 'boolean',
+      required: true,
+      default: true
+    },
     data: {
       type: 'array',
-      default: function () { return []; }
+      default: function () {
+        return [];
+      }
     }
   },
   collections: {
