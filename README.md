@@ -90,7 +90,7 @@ dataview.getData();
 
 ## Documentation
 
-The spot documentation can be found [here](http://nlesc.github.io/spot-framework/doc/spot/0.0.6/index.html).
+The spot documentation can be found [here](https://nlesc.github.io/spot-framework).
 
 ## Credits
 
