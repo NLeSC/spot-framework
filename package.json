@@ -32,7 +32,7 @@
   "semistandard": {
     "ignore": [
       "/dist",
-      "/doc"
+      "/docs"
     ]
   },
   "dependencies": {
@@ -58,6 +58,7 @@
     "uglify-js": "^2.6.2"
   },
   "scripts": {
+    "build": "browserify src/me.js > dist/spot-framework.js",
     "uglify": "browserify src/me.js  | uglifyjs --no-source-map --screw-ie8 > dist/spot-framework.min.js",
     "gh-pages": "npm run dist && git subtree push --prefix dist origin gh-pages",
     "check": "semistandard && jasmine",

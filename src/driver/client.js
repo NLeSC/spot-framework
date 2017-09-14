@@ -504,10 +504,6 @@ function initDataFilter (dataview, filter) {
 
       filter.data.push(item);
     });
-
-    // update counts
-    dataview.dataTotal = dataview.crossfilter.size();
-    dataview.dataSelected = dataview.countGroup.value();
   };
 }
 
@@ -538,7 +534,11 @@ function updateDataFilter (filter) {
 
 /**
  * Get data for every filter, and trigger a 'newData' event
+ *
+ * Returns a Promise that resolves to the dataview when all data and metadata has been updated
+ *
  * @param {Dataview} dataview
+ * @returns {Promise}
  */
 function getData (dataview) {
   dataview.filters.forEach(function (filter) {
@@ -547,6 +547,13 @@ function getData (dataview) {
       filter.trigger('newData');
     }
   });
+
+  // update counts
+  dataview.dataTotal = dataview.crossfilter.size();
+  dataview.dataSelected = dataview.countGroup.value();
+  dataview.trigger('newMetaData');
+
+  return Promise.resolve(dataview);
 }
 
 module.exports = {

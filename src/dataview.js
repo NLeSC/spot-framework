@@ -16,7 +16,7 @@ function getData () {
 
   var spot = this.parent;
 
-  spot.driver.getData(this);
+  return spot.driver.getData(this);
 }
 
 module.exports = BaseModel.extend({

@@ -90,6 +90,7 @@ function connectToServer (address) {
   socket.on('newMetaData', function (req) {
     me.dataview.dataTotal = parseInt(req.dataTotal);
     me.dataview.dataSelected = parseInt(req.dataSelected);
+    me.dataview.trigger('newMetaData');
   });
 
   socket.connect();
@@ -103,13 +104,35 @@ function connectToServer (address) {
  * @memberof! Spot
  */
 function disconnectFromServer () {
+  this.socket.disconnect();
+}
+
+/**
+ * Request a list of available datasets from the server
+ *
+ * Depending on the driver, this can be an asyncrhonous function.
+ * It returns a Promise that resolves to the dataset collection
+ *
+ * @function
+ * @returns {Promise}
+ *
+ * @memberof! Spot
+ */
+function getDatasets () {
   var me = this;
 
-  me.socket.disconnect();
+  return new Promise(function (resolve, reject) {
+    me.socket.emit('getDatasets');
+
+    me.datasets.once('reset', function () {
+      resolve(me.datasets);
+    });
+  });
 }
 
 /**
  * Reset min, max, and categories for all facets in the dataview
+ *
  * @param {Spot} me Main spot instance
  *
  * @memberof! Spot
@@ -414,6 +437,7 @@ module.exports = BaseModel.extend({
   },
   connectToServer: connectToServer,
   disconnectFromServer: disconnectFromServer,
+  getDatasets: getDatasets,
   setFacetMinMax: setFacetMinMax,
   setFacetCategories: setFacetCategories,
   toggleDataset: toggleDataset

@@ -8,7 +8,7 @@
  *  * `datasets` and `dataview`, or `dataset`
  *  * `filterId` or `facetId`
  *
- * Data can be requested by sending `getData` with dataset and filter ID, on which the server
+ * Data can be requested using the dataview.getData() method
  * responds with a `newData` message containing `filterId` and `data`.
  *
  * @module driver/server
@@ -110,15 +110,25 @@ function updateDataFilter (filter) {
 
 /**
  * Get data for every filter, and trigger a 'newData' event
+ *
+ * Returns a Promise that resolves to the dataview when all data and metadata has been updated
+ *
  * @param {Dataview} dataview
+ * @returns {Promise}
  */
 function getData (dataview) {
   var spot = dataview.parent;
 
-  spot.socket.emit('getData', {
-    datasets: spot.datasets.toJSON(),
-    dataview: dataview.toJSON()
-  }, this);
+  return new Promise(function (resolve, reject) {
+    spot.socket.emit('getData', {
+      datasets: spot.datasets.toJSON(),
+      dataview: dataview.toJSON()
+    });
+
+    dataview.once('newMetaData', function () {
+      resolve(dataview);
+    });
+  });
 }
 
 module.exports = {
