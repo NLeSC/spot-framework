@@ -192,6 +192,7 @@ function toggleDatasetFacets (me, dataset) {
       var options = {
         name: facet.name,
         accessor: facet.name,
+        description: facet.description,
         type: facet.transform.transformedType,
         units: facet.units, // TODO: transformed units?
         isActive: true
