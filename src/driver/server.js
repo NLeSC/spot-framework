@@ -24,7 +24,7 @@ function scan (dataset) {
   var spot = dataset.collection.parent;
 
   spot.socket.emit('scanData', {
-    datasetID: dataset.toJSON()
+    dataset: dataset.toJSON()
   });
 }
 
