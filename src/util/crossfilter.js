@@ -417,7 +417,8 @@ function datetimeGroupFn (partition) {
     if (d.isBefore(partition.minval) || d.isAfter(partition.maxval)) {
       return misval;
     }
-    return moment(d).startOf(timeStep).format();
+    var grouped = moment(d).startOf(timeStep).format();
+    return grouped;
   };
 }
 

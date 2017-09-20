@@ -7,21 +7,38 @@ var moment = require('moment-timezone');
  * See [this table](http://momentjs.com/docs/#/durations/creating/) for accpetable values
  * when using a crossfilter dataset.
  */
-function refineUnits (units) {
-  if (units === 'minute' || units === 'minutes') {
-    units = 'seconds';
-  } else if (units === 'hour' || units === 'hours') {
-    units = 'minutes';
-  } else if (units === 'day' || units === 'days') {
-    units = 'hours';
-  } else if (units === 'week' || units === 'weeks') {
-    units = 'days';
-  } else if (units === 'month' || units === 'months') {
-    units = 'days';
-  } else if (units === 'year' || units === 'years') {
-    units = 'months';
+function unitsForMilliseconds (milliseconds) {
+  var count = milliseconds;
+  if (count < 10000) { // 10 seconds
+    return 'milliseconds';
   }
-  return units;
+  count = count / 1000;
+
+  if (count < 15 * 60) { // 15 minutes
+    return 'seconds';
+  }
+  count = count / 60;
+
+  if (count < 3 * 60) { // 3 hours
+    return 'minutes';
+  }
+  count = count / 60;
+
+  if (count < 3 * 24) { // 3 days
+    return 'hours';
+  }
+  count = count / 24;
+
+  if (count < 3 * 7) { // 3 weeks
+    return 'days';
+  }
+  if (count < 7 * 52) { // 52 weeks
+    return 'weeks';
+  }
+  if (count < 2 * 365) { // 2 years
+    return 'months';
+  }
+  return 'years';
 }
 
 function getFormat (units) {
@@ -45,17 +62,13 @@ function getFormat (units) {
 }
 
 function getDatetimeResolution (start, end) {
-  var humanized = end.from(start, true).split(' ');
-  var units = humanized[humanized.length - 1];
-  return refineUnits(units);
+  var difference = end.diff(start);
+  return unitsForMilliseconds(difference);
 }
 
 function getDurationResolution (min, max) {
   var length = moment.duration(max.as('milliseconds') - min.as('milliseconds'), 'milliseconds');
-  var humanized = length.humanize().split(' ');
-
-  var units = humanized[humanized.length - 1];
-  return refineUnits(units);
+  return unitsForMilliseconds(length);
 }
 
 var TimePart = AmpersandModel.extend({

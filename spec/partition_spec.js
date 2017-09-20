@@ -11,7 +11,14 @@ function printAndStripIDs (collection) {
 
 describe('The Partition class', function () {
   describe('should do partitioning of a datetime facet', function () {
-    // TODO
+    it('should group a fixed number of bins', function () {
+      var partition = new Partition({
+        type: 'datetime',
+        minval: '1950-01-01 12:00',
+        maxval: '2014-04-03 15:00'
+      });
+      partition.setGroups();
+    });
   });
   describe('should do partitioning of a categorial facet', function () {
     // TODO
