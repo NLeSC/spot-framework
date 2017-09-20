@@ -100,6 +100,9 @@ module.exports = BaseModel.extend({
     // Dataset -> Datasets -> spot
     var spot = this.collection.parent;
 
+    // clear all existing facets
+    this.facets.reset();
+
     spot.driver.scan(this);
   }
 });
