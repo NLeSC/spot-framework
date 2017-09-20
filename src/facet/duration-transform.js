@@ -127,6 +127,42 @@ module.exports = AmpersandModel.extend({
         }
       },
       cache: false
+    },
+    /**
+     * The minimum value this facet can take, after the transformation has been applied
+     *
+     * @type {number}
+     * @memberof! DurationTransform
+     */
+    transformedMinAsText: {
+      deps: ['transformedMin', 'transformedType'],
+      fn: function () {
+        var minval = this.transformedMin;
+        if (this.transformedType === 'datetime') {
+          return minval.format();
+        } else {
+          return minval.toString();
+        }
+      },
+      cache: false
+    },
+    /**
+     * The maximum value this facet can take, after the transformation has been applied
+     *
+     * @type {number}
+     * @memberof! DurationTransform
+     */
+    transformedMaxAsText: {
+      deps: ['transformedMax', 'transformedType'],
+      fn: function () {
+        var maxval = this.transformedMax;
+        if (this.transformedType === 'datetime') {
+          return maxval.format();
+        } else {
+          return maxval.toString();
+        }
+      },
+      cache: false
     }
   },
 

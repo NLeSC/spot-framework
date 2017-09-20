@@ -327,30 +327,16 @@ function setFacetMinMax (facet) {
   datasets.forEach(function (dataset) {
     if (dataset.isActive) {
       var subFacet = dataset.facets.get(facet.name, 'name');
-      // TODO: do durations need special formatting?
       if (first) {
-        if (subFacet.transform.transformedType === 'datetime') {
-          facet.minvalAsText = subFacet.transform.transformedMin.format();
-          facet.maxvalAsText = subFacet.transform.transformedMax.format();
-        } else {
-          facet.minvalAsText = subFacet.transform.transformedMin.toString();
-          facet.maxvalAsText = subFacet.transform.transformedMax.toString();
-        }
+        facet.minvalAsText = subFacet.transform.transformedMinAsText;
+        facet.maxvalAsText = subFacet.transform.transformedMaxAsText;
         first = false;
       } else {
         if (subFacet.minval < facet.minval) {
-          if (subFacet.transform.transformedType === 'datetime') {
-            facet.minvalAsText = subFacet.transform.transformedMin.format();
-          } else {
-            facet.minvalAsText = subFacet.transform.transformedMin.toString();
-          }
+          facet.minvalAsText = subFacet.transform.transformedMinAsText;
         }
         if (subFacet.maxval > facet.maxval) {
-          if (subFacet.transform.transformedType === 'datetime') {
-            facet.maxvalAsText = subFacet.transform.transformedMax.format();
-          } else {
-            facet.maxvalAsText = subFacet.transform.transformedMax.toString();
-          }
+          facet.maxvalAsText = subFacet.transform.transformedMaxAsText;
         }
       }
     }

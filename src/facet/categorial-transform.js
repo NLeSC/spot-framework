@@ -49,6 +49,16 @@ module.exports = Model.extend({
       type: 'number',
       required: true,
       default: 100
+    },
+    transformedMinAsText: {
+      type: 'string',
+      required: true,
+      default: '0'
+    },
+    transformedMaxAsText: {
+      type: 'string',
+      required: true,
+      default: '100'
     }
   },
   collections: {
