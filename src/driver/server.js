@@ -23,7 +23,6 @@ function scan (dataset) {
   // Dataset -> Datasets -> Spot
   var spot = dataset.collection.parent;
 
-  console.log('emit: scanData');
   spot.socket.emit('scanData', {
     datasetID: dataset.toJSON()
   });
@@ -39,9 +38,8 @@ function setMinMax (dataset, facet) {
   // Dataset -> Datasets -> Spot
   var spot = dataset.collection.parent;
 
-  console.log('emit: setMinMax');
   spot.socket.emit('setMinMax', {
-    dataset: this.toJSON(),
+    dataset: dataset.toJSON(),
     facetId: facet.getId()
   });
 }
@@ -58,9 +56,8 @@ function setCategories (dataset, facet) {
   var spot = dataset.collection.parent;
 
   facet.categorialTransform.rules.reset();
-  console.log('emit: setCategories');
   spot.socket.emit('setCategories', {
-    dataset: this.toJSON(),
+    dataset: dataset.toJSON(),
     facetId: facet.getId()
   });
 }
@@ -75,9 +72,8 @@ function setPercentiles (dataset, facet) {
   // Dataset -> Datasets -> Spot
   var spot = dataset.collection.parent;
 
-  console.log('emit: setPercentiles');
   spot.socket.emit('setPercentiles', {
-    dataset: this.toJSON(),
+    dataset: dataset.toJSON(),
     facetId: facet.getId()
   });
 }

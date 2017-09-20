@@ -44,6 +44,7 @@ function connectToServer (address) {
   });
 
   socket.on('syncDatasets', function (req) {
+    // do a destructive update, as we get a fully new list of datasets
     me.datasets.reset(req.data);
   });
 
@@ -52,8 +53,10 @@ function connectToServer (address) {
   });
 
   socket.on('syncFacets', function (req) {
+    // do an incremental update, as we typically update only a few properties of a facet
+    // Also, a full reset will orphan the view.model objects in spot-app (ie. crashes)
     var dataset = me.datasets.get(req.datasetId);
-    dataset.facets.reset(req.data);
+    dataset.facets.add(req.data, { merge: true });
   });
 
   socket.on('newData', function (req) {
