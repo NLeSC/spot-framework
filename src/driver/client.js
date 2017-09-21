@@ -353,6 +353,7 @@ function scan (dataset) {
       setMinMax(dataset, facet);
     }
   });
+  dataset.trigger('syncFacets');
 }
 
 /**

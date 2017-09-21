@@ -57,6 +57,7 @@ function connectToServer (address) {
     // Also, a full reset will orphan the view.model objects in spot-app (ie. crashes)
     var dataset = me.datasets.get(req.datasetId);
     dataset.facets.add(req.data, { merge: true });
+    dataset.trigger('syncFacets');
   });
 
   socket.on('newData', function (req) {
