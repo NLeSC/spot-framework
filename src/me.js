@@ -44,8 +44,8 @@ function connectToServer (address) {
   });
 
   socket.on('syncDatasets', function (req) {
-    // do a destructive update, as we get a fully new list of datasets
-    me.datasets.reset(req.data);
+    // do an incremental update, as we typically start without datasets
+    me.datasets.add(req.data, { merge: true });
   });
 
   socket.on('syncDataview', function (req) {
