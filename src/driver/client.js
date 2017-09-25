@@ -105,7 +105,7 @@ function setCategories (dataset, facet) {
   var valFn = utildx.baseValueFn(facet);
 
   var p = {};
-  var p_length = 0;
+  var Plength = 0;
   dataset.data.forEach(function (d) {
     var vals = valFn(d);
     if (vals instanceof Array) {
@@ -113,9 +113,9 @@ function setCategories (dataset, facet) {
         if (p.hasOwnProperty(val)) {
           p[val]++;
         } else {
-          if (p_length < 75) { // NOTE: limit to maximally 75 categories
+          if (Plength < 75) { // NOTE: limit to maximally 75 categories
             p[val] = 1;
-            p_length++;
+            Plength++;
           }
         }
       });
@@ -123,9 +123,9 @@ function setCategories (dataset, facet) {
       if (p.hasOwnProperty(vals)) {
         p[vals]++;
       } else {
-        if (p_length < 75) { // NOTE: limit to maximally 75 categories
+        if (Plength < 75) { // NOTE: limit to maximally 75 categories
           p[vals] = 1;
-          p_length++;
+          Plength++;
         }
       }
     }
