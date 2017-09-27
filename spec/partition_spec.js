@@ -14,10 +14,11 @@ describe('The Partition class', function () {
     it('should group a fixed number of bins', function () {
       var partition = new Partition({
         type: 'datetime',
+        ordering: 'value',
         minval: '1950-01-01 12:00',
         maxval: '2014-04-03 15:00'
       });
-      partition.setGroups();
+      expect(partition.groups.length).toBe(65);
     });
   });
   describe('should do partitioning of a categorial facet', function () {
@@ -27,12 +28,12 @@ describe('The Partition class', function () {
     it('should group a fixed number of bins', function () {
       var partition = new Partition({
         type: 'continuous',
+        ordering: 'value',
         minval: 0,
         maxval: 10,
         groupingParam: 10,
         groupingContinuous: 'fixedn'
       });
-      partition.setGroups();
 
       expect(partition.groups.length).toEqual(10);
       expect(printAndStripIDs(partition.groups)).toEqual([
@@ -52,12 +53,12 @@ describe('The Partition class', function () {
     it('should group a fixed size of bins', function () {
       var partition = new Partition({
         type: 'continuous',
+        ordering: 'value',
         minval: -10,
         maxval: 10,
         groupingParam: 5,
         groupingContinuous: 'fixeds'
       });
-      partition.setGroups();
 
       expect(partition.groups.length).toEqual(4);
       expect(printAndStripIDs(partition.groups)).toEqual([
@@ -71,12 +72,12 @@ describe('The Partition class', function () {
     it('should group a fixed size of centered bins', function () {
       var partition = new Partition({
         type: 'continuous',
+        ordering: 'value',
         minval: -10,
         maxval: 10,
         groupingParam: 5,
         groupingContinuous: 'fixedsc'
       });
-      partition.setGroups();
 
       expect(partition.groups.length).toEqual(5);
       expect(printAndStripIDs(partition.groups)).toEqual([
@@ -91,12 +92,12 @@ describe('The Partition class', function () {
     it('should group logarithmically', function () {
       var partition = new Partition({
         type: 'continuous',
+        ordering: 'value',
         minval: 1,
         maxval: 1000,
         groupingParam: 3,
         groupingContinuous: 'log'
       });
-      partition.setGroups();
 
       expect(partition.groups.length).toEqual(3);
       var stripped = printAndStripIDs(partition.groups);

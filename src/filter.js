@@ -135,7 +135,6 @@ module.exports = Base.extend({
           minval: partition.selected[0],
           maxval: partition.selected[1]
         }, { silent: true });
-        partition.setGroups();
       } else if (partition.selected.length > 0 && (partition.isCategorial)) {
         // zoom to selected categories, if possible
         partition.groups.reset();
@@ -177,7 +176,6 @@ module.exports = Base.extend({
           if (partition.isDatetime || partition.isContinuous) {
             partition.reset({ silent: true });
           }
-          partition.setGroups();
         });
       }
       this.initDataFilter();

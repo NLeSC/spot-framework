@@ -14,19 +14,18 @@ var util = require('./util/time');
 
 /*
  * @param {Partition} partition
+ * @param {Group[]} groups
  * @memberof! Partition
  */
-function setDatetimeGroups (partition) {
+function setDatetimeGroups (partition, groups) {
   var timeStart = partition.minval;
   var timeEnd = partition.maxval;
   var timeRes = util.getDatetimeResolution(timeStart, timeEnd);
   var timeZone = partition.zone;
 
-  partition.groups.reset();
-
   var current = moment(timeStart);
-  while ((!current.isAfter(timeEnd)) && partition.groups.length < 500) {
-    partition.groups.add({
+  while ((!current.isAfter(timeEnd)) && groups.length < 500) {
+    groups.add({
       min: moment(current).tz(timeZone).startOf(timeRes),
       max: moment(current).tz(timeZone).endOf(timeRes),
       value: moment(current).tz(timeZone).startOf(timeRes).format(),
@@ -38,20 +37,19 @@ function setDatetimeGroups (partition) {
 
 /*
  * @param {Partition} partition
+ * @param {Group[]} groups
  * @memberof! Partition
  */
-function setDurationGroups (partition) {
+function setDurationGroups (partition, groups) {
   var dStart = partition.minval;
   var dEnd = partition.maxval;
   var dRes = util.getDurationResolution(dStart, dEnd);
-
-  partition.groups.reset();
 
   var current = Math.floor(parseFloat(dStart.as(dRes)));
   var last = Math.floor(parseFloat(dEnd.as(dRes)));
 
   while (current < last) {
-    partition.groups.add({
+    groups.add({
       min: moment.duration(current, dRes),
       max: moment.duration(current + 1, dRes),
       value: moment.duration(current, dRes).toISOString(),
@@ -67,8 +65,9 @@ function setDurationGroups (partition) {
  * `partition.maxval`, and the `partition.groupingParam`.
  * @memberof! Partition
  * @param {Partition} partition
+ * @param {Group[]} groups
  */
-function setContinuousGroups (partition) {
+function setContinuousGroups (partition, groups) {
   var param = partition.groupingParam;
   var x0, x1, size, nbins;
 
@@ -98,10 +97,6 @@ function setContinuousGroups (partition) {
     size = (x1 - x0) / nbins;
   }
 
-  // and update partition.groups
-  partition.groups.reset();
-  partition.ordering = 'abc';
-
   function unlog (x) {
     return Math.exp(x * Math.log(10));
   }
@@ -113,14 +108,14 @@ function setContinuousGroups (partition) {
     var mid = 0.5 * (start + end);
 
     if (partition.groupLog) {
-      partition.groups.add({
+      groups.add({
         min: unlog(start),
         max: unlog(end),
         value: unlog(start),
         label: unlog(end).toPrecision(5)
       });
     } else {
-      partition.groups.add({
+      groups.add({
         min: start,
         max: end,
         value: mid,
@@ -134,21 +129,26 @@ function setContinuousGroups (partition) {
  * Setup a grouping based on the `partition.categorialTransform`
  * @memberof! Partition
  * @param {Partition} partition
+ * @param {Group[]} groups
  */
-function setCategorialGroups (partition) {
-  // and update partition.groups
-  partition.groups.reset();
-  partition.ordering = 'abc';
+function setCategorialGroups (partition, groups) {
+  // dataview -> filters -> filter -> partitions -> partition
+  //          -> facets
 
-  // partition -> partitions -> filter -> filters -> dataset
-  var filter = partition.collection.parent;
-  var dataset = filter.collection.parent;
-  var facet = dataset.facets.get(partition.facetName, 'name');
+  var dataview;
+  var facet;
+  try {
+    dataview = partition.collection.parent.collection.parent;
+    facet = dataview.facets.get(partition.facetName, 'name');
+  } catch (e) {
+    console.error('setCategorialGroups: cannot locate facet for this partition');
+    return;
+  }
 
   if (facet.isCategorial) {
     // default: a categorial facet, with a categorial parittion
-    facet.categorialTransform.rules.forEach(function (rule) {
-      partition.groups.add({
+    facet.categorialTransform.rules.forEach(function (rule, i) {
+      groups.add({
         value: rule.group,
         label: rule.group,
         count: rule.count
@@ -158,8 +158,8 @@ function setCategorialGroups (partition) {
     var format = facet.datetimeTransform.transformedFormat;
     var timePart = util.timeParts.get(format, 'description');
 
-    timePart.groups.forEach(function (g) {
-      partition.groups.add({
+    timePart.groups.forEach(function (g, i) {
+      groups.add({
         value: g,
         label: g,
         count: 0
@@ -167,30 +167,6 @@ function setCategorialGroups (partition) {
     });
   } else {
     console.warn('Not implemented');
-  }
-}
-
-/**
- * Setup the partition.groups()
- *
- * @memberof! Partition
- * @param {Partition} partition
- */
-function setGroups () {
-  var partition = this;
-
-  if (partition.isCategorial) {
-    setCategorialGroups(partition);
-  } else if (partition.isContinuous) {
-    setContinuousGroups(partition);
-  } else if (partition.isDatetime) {
-    setDatetimeGroups(partition);
-  } else if (partition.isDuration) {
-    setDurationGroups(partition);
-  } else if (partition.isText) {
-    partition.groups.reset();
-  } else {
-    console.error('Cannot set groups for partition', partition.getId());
   }
 }
 
@@ -332,7 +308,7 @@ module.exports = BaseModel.extend({
     },
 
     /**
-     * The ID of the facet to partition over
+     * The name of the facet to partition over
      * @memberof! Partition
      * @type {string}
      */
@@ -351,12 +327,12 @@ module.exports = BaseModel.extend({
     /**
      * For categorial and text Facets, the ordering can be alfabetical or by count
      * @memberof! Partition
-     * @type {number|moment}
      */
     ordering: {
       type: 'string',
-      values: ['count', 'abc'],
-      default: 'abc'
+      values: ['count', 'value'],
+      required: true,
+      default: 'value'
     },
 
     /**
@@ -412,15 +388,6 @@ module.exports = BaseModel.extend({
         return [];
       }
     }
-  },
-  collections: {
-    /**
-     * The (ordered) set of groups this Partition can take, making up this partition.
-     * Used for plotting
-     * @memberof! Partition
-     * @type {Group[]}
-     */
-    groups: Groups
   },
   derived: {
     // properties for: type
@@ -484,6 +451,41 @@ module.exports = BaseModel.extend({
       fn: function () {
         return this.groupingContinuous === 'log';
       }
+    },
+    /**
+     * The (ordered) set of groups this Partition can take, making up this partition.
+     * The list is recalculated when any of the partition's properties change:
+     * 'groupingContinuous', 'groupingParam', 'minval', 'maxval', 'type', 'zone' change
+     * The list keeps itself sorted according to the partition.ordering
+     *
+     * Can be used for plotting etc.
+     * @memberof! Partition
+     * @type {Group[]}
+     */
+    groups: {
+      deps: ['groupingContinuous', 'groupingParam', 'minval', 'maxval', 'type', 'zone'],
+      fn: function () {
+        var partition = this;
+        var groups = new Groups([], {
+          parent: partition
+        });
+
+        if (partition.isCategorial) {
+          setCategorialGroups(partition, groups);
+        } else if (partition.isContinuous) {
+          setContinuousGroups(partition, groups);
+        } else if (partition.isDatetime) {
+          setDatetimeGroups(partition, groups);
+        } else if (partition.isDuration) {
+          setDurationGroups(partition, groups);
+        } else if (partition.isText) {
+          // no-op
+        } else {
+          console.error('Cannot set groups for partition', partition.getId());
+        }
+
+        return groups;
+      }
     }
   },
   updateSelection: function (group) {
@@ -492,6 +494,5 @@ module.exports = BaseModel.extend({
   filterFunction: function () {
     return selection.filterFunction(this);
   },
-  setGroups: setGroups,
   reset: reset
 });

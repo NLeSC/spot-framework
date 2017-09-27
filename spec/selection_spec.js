@@ -1,8 +1,38 @@
 /* eslint-env jasmine */
 var moment = require('moment-timezone');
 
+var Dataview = require('../src/dataview');
 var Partition = require('../src/partition');
 var Group = require('../src/partition/group');
+
+var dataview = new Dataview({
+  facets: [
+    {
+      name: 'test',
+      type: 'categorial',
+      categorialTransform: {
+        transformedType: 'categorial',
+        rules: [
+          { expression: 'zero', group: 'zero' },
+          { expression: 'one', group: 'one' },
+          { expression: 'two', group: 'two' },
+          { expression: 'three', group: 'three' }
+        ]
+      }
+    }
+  ],
+  filters: [
+    {
+      partitions: [
+        {
+          facetName: 'test',
+          type: 'categorial',
+          ordering: 'value'
+        }
+      ]
+    }
+  ]
+});
 
 describe('The selection module', function () {
   it('should provide a continuous selection', function () {
@@ -80,15 +110,9 @@ describe('The selection module', function () {
   });
 
   it('should provide a categorial Selection', function () {
-    var p = new Partition({
-      type: 'categorial',
-      groups: [
-        {value: 'zero'},
-        {value: 'one'},
-        {value: 'two'},
-        {value: 'three'}
-      ]
-    });
+    // Categorial partitions derive their groups from the linked facet and its categorialTransform
+    // so we can't just create one and have it work, but we have to use a somewhat realistic dataview
+    var p = dataview.filters.models[0].partitions.models[0];
 
     // Update a categorial filter using the provided group, using the following rules:
     // A) none selected:

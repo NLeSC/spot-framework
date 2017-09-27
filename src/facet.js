@@ -57,7 +57,7 @@ module.exports = BaseModel.extend({
     units: ['string', true, ''],
 
     /**
-     * Short name for this facet, for displaying purposes
+     * Short name (human readable) for this facet, must be unique.
      * @memberof! Facet
      * @type {string}
      */
@@ -110,6 +110,7 @@ module.exports = BaseModel.extend({
      * @type {string}
      */
     minvalAsText: 'string',
+
     /**
      * For continuous or datetime Facets, the maximum value as text.
      * Parsed value available in the `maxval` property
