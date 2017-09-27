@@ -20,14 +20,14 @@ module.exports = Base.extend({
      * @type {string}
      * @memberof! CategorialRule
      */
-    expression: ['string', false, 'Missing'],
+    expression: ['string', true, 'Missing'],
 
     /**
      * Number of items this transform is used
      * @type {number}
      * @memberof! CategorialRule
      */
-    count: ['number', false, 0],
+    count: ['number', true, 0],
 
     /**
      * Name of the group this is mapped to. The special substring $1 is replaced by the first captured group,
@@ -35,7 +35,7 @@ module.exports = Base.extend({
      * @type {string}
      * @memberof! CategorialRule
      */
-    group: ['string', false, 'Missing']
+    group: ['string', true, 'Missing']
   },
   derived: {
 
@@ -60,7 +60,6 @@ module.exports = Base.extend({
           return function (text) {
             var m = exp.exec(text);
             if (m) {
-              that.count++;
               return that.group;
               // return that.group.replace('$1', m[1]);
             } else {
@@ -71,7 +70,6 @@ module.exports = Base.extend({
           // otherwise do matching using '==='
           return function (text) {
             if (text === that.expression) {
-              that.count++;
               return that.group;
             } else {
               return false;

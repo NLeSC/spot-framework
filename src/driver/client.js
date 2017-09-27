@@ -106,7 +106,7 @@ function setCategories (dataset, facet) {
 
   var p = {};
   var Plength = 0;
-  dataset.data.forEach(function (d) {
+  dataset.data.forEach(function (d, i) {
     var vals = valFn(d);
     if (vals instanceof Array) {
       vals.forEach(function (val) {

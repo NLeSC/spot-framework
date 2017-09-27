@@ -346,7 +346,8 @@ function setFacetMinMax (facet) {
 
 function setFacetCategories (facet) {
   var datasets = this.datasets;
-  var categories = {};
+
+  facet.categorialTransform.reset();
 
   // get categories by combining the sets for the separate datasets
   datasets.forEach(function (dataset) {
@@ -354,27 +355,31 @@ function setFacetCategories (facet) {
       var subFacet = dataset.facets.get(facet.name, 'name');
 
       if (subFacet.isCategorial) {
+        // merge rules from subFacet into those of Facet
         subFacet.categorialTransform.rules.forEach(function (rule) {
-          categories[rule.expression] = rule.group;
+          var newRule = facet.categorialTransform.rules.get(rule.expression, 'expression');
+          if (newRule) {
+            newRule.count += rule.count;
+          } else {
+            facet.categorialTransform.rules.add(rule.toJSON());
+          }
         });
       } else if (subFacet.isDatetime) {
-        var groups = timeUtil.timeParts.get(subFacet.datetimeTransform.transformedFormat, 'description').groups;
-        groups.forEach(function (group) {
-          categories[group] = group;
+        var expressions = timeUtil.timeParts.get(subFacet.datetimeTransform.transformedFormat, 'description').groups;
+        expressions.forEach(function (expression) {
+          var newRule = facet.categorialTransform.rules.get(expression, 'expression');
+          if (newRule) {
+            // no-op: category exist and we don't have a proper count
+          } else {
+            facet.categorialTransform.rules.add({
+              expression: expression,
+              count: 0,
+              group: expression
+            });
+          }
         });
-      } else {
-        console.error('Not implemented');
       }
     }
-  });
-
-  facet.categorialTransform.reset();
-  Object.keys(categories).forEach(function (cat) {
-    facet.categorialTransform.rules.add({
-      expression: cat,
-      count: 0, // FIXME
-      group: categories[cat]
-    });
   });
 }
 

@@ -9,6 +9,7 @@ var Collection = require('ampersand-collection');
 
 var Rule = require('./categorial-rule');
 var Rules = Collection.extend({
+  indexes: ['expression'],
   model: Rule
 });
 
