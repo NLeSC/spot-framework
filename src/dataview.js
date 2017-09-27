@@ -13,6 +13,7 @@ function getData () {
   if (this.isPaused) {
     return;
   }
+  console.time('Get data');
 
   var spot = this.parent;
 

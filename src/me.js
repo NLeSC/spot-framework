@@ -94,6 +94,7 @@ function connectToServer (address) {
   socket.on('newMetaData', function (req) {
     me.dataview.dataTotal = parseInt(req.dataTotal);
     me.dataview.dataSelected = parseInt(req.dataSelected);
+    console.timeEnd('Get data');
     me.dataview.trigger('newMetaData');
   });
 
