@@ -57,6 +57,9 @@ function connectToServer (address) {
     // Also, a full reset will orphan the view.model objects in spot-app (ie. crashes)
     var dataset = me.datasets.get(req.datasetId);
     dataset.facets.add(req.data, { merge: true });
+
+    me.resetDataview(); // NOTE: the cached (serialized) datasets need to be updated, too
+
     dataset.trigger('syncFacets');
   });
 
@@ -142,17 +145,30 @@ function getDatasets () {
  *
  * @memberof! Spot
  */
-function resetDataview (me) {
+function resetDataview () {
+  var toSerialize = [];
+
+  // Update list of active datasets, and serialize the datasets parts we need to send on getData requests
+  this.dataview.datasetIds = [];
+  this.datasets.forEach(function (dataset) {
+    if (dataset.isActive) {
+      // BUGFIX: the list of datasetIds can get out of sync when using spot-server. Just recreate it always.
+      this.dataview.datasetIds.push(dataset.getId());
+      toSerialize.push(dataset.toJSON()); // TODO: only serialize used facets?
+    }
+  }, this);
+  this.cachedDatasets = JSON.stringify(toSerialize);
+
   // rescan min/max values and categories for the newly added facets
-  me.dataview.facets.forEach(function (facet) {
-    var newFacet = me.dataview.facets.get(facet.name, 'name');
+  this.dataview.facets.forEach(function (facet) {
+    var newFacet = this.dataview.facets.get(facet.name, 'name');
 
     if (newFacet.isContinuous || newFacet.isDatetime || newFacet.isDuration) {
-      me.setFacetMinMax(facet);
+      this.setFacetMinMax(facet);
     } else if (newFacet.isCategorial) {
-      me.setFacetCategories(facet);
+      this.setFacetCategories(facet);
     }
-  });
+  }, this);
 }
 
 /*
@@ -290,21 +306,9 @@ function toggleDatasetData (me, dataset) {
  * @memberof! Spot
  */
 function toggleDataset (dataset) {
-  // Update the list of active datasets in the dataview
-  if (dataset.isActive) {
-    // remove datasetId
-    var i = this.dataview.datasetIds.indexOf(dataset.getId());
-    if (i > 0) {
-      this.dataview.datasetIds.splice(i, 1);
-    }
-  } else {
-    // add datasetId
-    this.dataview.datasetIds.push(dataset.getId());
-  }
-
   if (this.sessionType === 'server') {
     toggleDatasetFacets(this, dataset);
-  } else {
+  } else if (this.sessionType === 'client') {
     // release all filters
     this.dataview.filters.forEach(function (filter) {
       filter.releaseDataFilter();
@@ -317,7 +321,7 @@ function toggleDataset (dataset) {
 
   dataset.isActive = !dataset.isActive;
 
-  resetDataview(this);
+  this.resetDataview();
 }
 
 function setFacetMinMax (facet) {
@@ -446,6 +450,7 @@ module.exports = BaseModel.extend({
       }
     }
   },
+  resetDataview: resetDataview,
   connectToServer: connectToServer,
   disconnectFromServer: disconnectFromServer,
   getDatasets: getDatasets,

@@ -117,7 +117,7 @@ function getData (dataview) {
 
   return new Promise(function (resolve, reject) {
     spot.socket.emit('getData', {
-      datasets: spot.datasets.toJSON(),
+      datasets: spot.cachedDatasets,
       dataview: dataview.toJSON()
     });
 
