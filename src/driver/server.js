@@ -23,6 +23,11 @@ function scan (dataset) {
   // Dataset -> Datasets -> Spot
   var spot = dataset.collection.parent;
 
+  if (spot.isLockedDown) {
+    // spot-server will not respond so no use requesting a scan
+    return;
+  }
+
   spot.socket.emit('scanData', {
     dataset: dataset.toJSON()
   });
@@ -38,10 +43,18 @@ function setMinMax (dataset, facet) {
   // Dataset -> Datasets -> Spot
   var spot = dataset.collection.parent;
 
-  spot.socket.emit('setMinMax', {
-    dataset: dataset.toJSON(),
-    facetId: facet.getId()
-  });
+  if (spot.isLockedDown) {
+    spot.socket.emit('setMinMax', {
+      datasetId: dataset.getId(),
+      facetId: facet.getId()
+    });
+  } else {
+    spot.socket.emit('setMinMax', {
+      datasetId: dataset.getId(),
+      dataset: dataset.toJSON(),
+      facetId: facet.getId()
+    });
+  }
 }
 
 /**
@@ -56,10 +69,18 @@ function setCategories (dataset, facet) {
   var spot = dataset.collection.parent;
 
   facet.categorialTransform.rules.reset();
-  spot.socket.emit('setCategories', {
-    dataset: dataset.toJSON(),
-    facetId: facet.getId()
-  });
+  if (spot.isLockedDown) {
+    spot.socket.emit('setCategories', {
+      datasetId: dataset.getId(),
+      facetId: facet.getId()
+    });
+  } else {
+    spot.socket.emit('setCategories', {
+      datasetId: dataset.getId(),
+      dataset: dataset.toJSON(),
+      facetId: facet.getId()
+    });
+  }
 }
 
 /**
@@ -72,10 +93,18 @@ function setPercentiles (dataset, facet) {
   // Dataset -> Datasets -> Spot
   var spot = dataset.collection.parent;
 
-  spot.socket.emit('setPercentiles', {
-    dataset: dataset.toJSON(),
-    facetId: facet.getId()
-  });
+  if (spot.isLockedDown) {
+    spot.socket.emit('setPercentiles', {
+      datasetId: dataset.getId(),
+      facetId: facet.getId()
+    });
+  } else {
+    spot.socket.emit('setPercentiles', {
+      datasetId: dataset.getId(),
+      dataset: dataset.toJSON(),
+      facetId: facet.getId()
+    });
+  }
 }
 
 /**
@@ -116,10 +145,16 @@ function getData (dataview) {
   var spot = dataview.parent;
 
   return new Promise(function (resolve, reject) {
-    spot.socket.emit('getData', {
-      datasets: spot.cachedDatasets,
-      dataview: dataview.toJSON()
-    });
+    if (spot.isLockedDown) {
+      spot.socket.emit('getData', {
+        dataview: dataview.toJSON()
+      });
+    } else {
+      spot.socket.emit('getData', {
+        datasets: spot.cachedDatasets,
+        dataview: dataview.toJSON()
+      });
+    }
 
     dataview.once('newMetaData', function () {
       resolve(dataview);
