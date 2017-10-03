@@ -134,7 +134,7 @@ module.exports = Base.extend({
         partition.set({
           minval: partition.selected[0],
           maxval: partition.selected[1]
-        }, { silent: true });
+        });
       } else if (partition.selected.length > 0 && (partition.isCategorial)) {
         // zoom to selected categories, if possible
         partition.groups.reset();
@@ -174,7 +174,7 @@ module.exports = Base.extend({
         // nothing was selected and no drill down: reset partitioning
         this.partitions.forEach(function (partition) {
           if (partition.isDatetime || partition.isContinuous) {
-            partition.reset({ silent: true });
+            partition.reset();
           }
         });
       }
