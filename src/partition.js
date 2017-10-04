@@ -354,7 +354,7 @@ module.exports = BaseModel.extend({
      * @memberof! Partition
      * @type {number}
      */
-    groupingParam: ['number', true, 15],
+    groupingParam: ['number', true, 20],
 
     /**
      * Grouping strategy:
