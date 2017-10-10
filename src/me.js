@@ -333,6 +333,12 @@ function setFacetMinMax (facet) {
   datasets.forEach(function (dataset) {
     if (dataset.isActive) {
       var subFacet = dataset.facets.get(facet.name, 'name');
+
+      // if the facet is not in this dataset, do nothing
+      if (!subFacet) {
+        return;
+      }
+
       if (first) {
         facet.minvalAsText = subFacet.transform.transformedMinAsText;
         facet.maxvalAsText = subFacet.transform.transformedMaxAsText;
@@ -358,6 +364,11 @@ function setFacetCategories (facet) {
   datasets.forEach(function (dataset) {
     if (dataset.isActive) {
       var subFacet = dataset.facets.get(facet.name, 'name');
+
+      // if the facet is not in this dataset, do nothing
+      if (!subFacet) {
+        return;
+      }
 
       if (subFacet.isCategorial) {
         // merge rules from subFacet into those of Facet
