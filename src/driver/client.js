@@ -311,7 +311,7 @@ function scan (dataset) {
     // Reconfigure facet
     facet.accessor = isArray ? facet.accessor + '[]' : facet.accessor;
     facet.type = guessType(values);
-    facet.description = values.join(', ').match('^.{0,40}') + '...';
+    facet.description = facet.type + ' facet. Values: ' + values.join(', ').match('^.{0,40}') + '...';
     facet.isActive = true;
   }
 
