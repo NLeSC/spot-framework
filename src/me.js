@@ -319,8 +319,33 @@ function toggleDataset (dataset) {
     toggleDatasetData(this, dataset);
   }
 
-  dataset.isActive = !dataset.isActive;
+  if (dataset.isActive) {
+    this.dataview.filters.forEach(function (filter) {
+      // remove unavailable facets from partitions and facets
 
+      var removePartitions = [];
+      filter.partitions.forEach(function (partition) {
+        var facet = this.dataview.facets.get(partition.facetName);
+        if (!facet) {
+          removePartitions.push(partition);
+          console.log('removing partition', partition.facetName);
+        }
+      }, this);
+      filter.partitions.remove(removePartitions);
+
+      var removeAggregates = [];
+      filter.aggregates.forEach(function (aggregate) {
+        var facet = this.dataview.facets.get(aggregate.facetName);
+        if (!facet) {
+          removeAggregates.push(aggregate);
+          console.log('removing partition', aggregate.facetName);
+        }
+      }, this);
+      filter.aggregates.remove(removeAggregates);
+    }, this);
+  }
+
+  dataset.isActive = !dataset.isActive;
   this.resetDataview();
 }
 
