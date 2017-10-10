@@ -65,6 +65,10 @@ function connectToServer (address) {
 
   socket.on('newData', function (req) {
     var filter = me.dataview.filters.get(req.filterId);
+    if (!filter) {
+      // ignore data for filters we do not have (anymore)
+      return;
+    }
     if (req.data) {
       filter.data = req.data;
 
