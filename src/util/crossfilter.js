@@ -409,7 +409,11 @@ function continuousGroupFn (partition) {
  * http://momentjs.com/docs/#/displaying/as-javascript-date/
  */
 function datetimeGroupFn (partition) {
-  var timeStep = util.getDatetimeResolution(partition.minval, partition.maxval);
+  var timeStep = partition.groupingDatetime;
+  if (timeStep === 'auto') {
+    timeStep = util.getDatetimeResolution(partition.minval, partition.maxval);
+  }
+
   return function (d) {
     if (d === misval) {
       return misval;

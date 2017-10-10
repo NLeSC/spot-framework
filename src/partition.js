@@ -20,8 +20,12 @@ var util = require('./util/time');
 function setDatetimeGroups (partition, groups) {
   var timeStart = partition.minval;
   var timeEnd = partition.maxval;
-  var timeRes = util.getDatetimeResolution(timeStart, timeEnd);
+  var timeRes = partition.groupingDatetime;
   var timeZone = partition.zone;
+
+  if (timeRes === 'auto') {
+    timeRes = util.getDatetimeResolution(timeStart, timeEnd);
+  }
 
   var current = moment(timeStart);
   while ((!current.isAfter(timeEnd)) && groups.length < 500) {
@@ -357,7 +361,7 @@ module.exports = BaseModel.extend({
     groupingParam: ['number', true, 20],
 
     /**
-     * Grouping strategy:
+     * Grouping continuous strategy:
      *  * `fixedn`  fixed number of bins in the interval [minval, maxval]
      *  * `fixedsc` a fixed binsize, centered on zero
      *  * `fixeds`  a fixed binsize, starting at zero
@@ -372,6 +376,21 @@ module.exports = BaseModel.extend({
       required: true,
       default: 'fixedn',
       values: ['fixedn', 'fixedsc', 'fixeds', 'log']
+    },
+
+    /**
+     * Grouping datetime strategy:
+     * round datetimes down to one of these units:
+     * auto, milliseconds, seconds, minutes, hours, days, weeks, months, years
+     *
+     * @memberof! Partition
+     * @type {string}
+     */
+    groupingDatetime: {
+      type: 'string',
+      required: true,
+      default: 'auto',
+      values: ['auto', 'milliseconds', 'seconds', 'minutes', 'hours', 'days', 'weeks', 'months', 'years']
     },
 
     /**
@@ -463,7 +482,7 @@ module.exports = BaseModel.extend({
      * @type {Group[]}
      */
     groups: {
-      deps: ['groupingContinuous', 'groupingParam', 'minval', 'maxval', 'type', 'zone'],
+      deps: ['groupingContinuous', 'groupingParam', 'groupingDatetime', 'minval', 'maxval', 'type', 'zone'],
       fn: function () {
         var partition = this;
         var groups = new Groups([], {
