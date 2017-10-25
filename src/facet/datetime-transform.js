@@ -107,10 +107,10 @@ module.exports = AmpersandModel.extend({
           return this.transform(this.parent.minval);
         }
         timePart = util.timeParts.get(this.transformedFormat, 'description');
-        if (timePart.calcualte) {
-          return this.transform(this.parent.minval);
+        if (timePart.calculate) {
+          return parseInt(this.transform(this.parent.minval));
         } else {
-          return timePart.min;
+          return parseInt(timePart.min);
         }
       },
       cache: false
@@ -128,10 +128,10 @@ module.exports = AmpersandModel.extend({
           return this.transform(this.parent.maxval);
         }
         timePart = util.timeParts.get(this.transformedFormat, 'description');
-        if (timePart.calcualte) {
-          return this.transform(this.parent.maxval);
+        if (timePart.calculate) {
+          return parseInt(this.transform(this.parent.maxval));
         } else {
-          return timePart.max;
+          return parseInt(timePart.max);
         }
       },
       cache: false
