@@ -202,7 +202,7 @@ module.exports = BaseModel.extend({
         var newValue;
 
         // check for momentjs objects
-        if (moment.isDuration(value)) {
+        if (value.constructor.name === 'Duration') {
           return {
             val: moment.duration(value),
             type: 'numberDatetimeOrDuration'
