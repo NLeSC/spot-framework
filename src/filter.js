@@ -123,7 +123,7 @@ module.exports = Base.extend({
     this.zoomHistory.push(JSON.stringify(this.partitions.toJSON()));
 
     this.partitions.forEach(function (partition) {
-      if ((partition.selected.length === 2) && (partition.isDatetime || partition.isContinuous)) {
+      if ((partition.selected.length === 2) && (partition.isDatetime || partition.isContinuous || partition.isDuration)) {
         if (partition.groupFixedS || partition.groupFixedSC) {
           // scale down binsize
           var newSize = partition.selected[1] - partition.selected[0];
