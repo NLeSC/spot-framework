@@ -17,96 +17,98 @@ var io = require('socket.io-client');
  *
  * @function
  * @param {address} Optional. IP address and port number to connect to. fi.  'http://localhost:3000'
+ * @returns {Promise} Resolved when connection is established
  *
  * @memberof! Spot
  */
 function connectToServer (address) {
   var me = this;
-  var socket;
 
-  if (address) {
-    // connect to specified address
-    // necessary for when window.location is not availble (node.js)
-    socket = io.connect(address);
-  } else {
-    // Use socket.io fallback to autodetect address
-    // ie. when a website wants to connect, use the window.location
-    socket = io.connect();
-  }
-
-  socket.on('connect', function () {
-    me.isConnected = true;
-    console.log('Connected to server');
-  });
-
-  socket.on('disconnect', function () {
-    me.isConnected = false;
-  });
-
-  socket.on('syncDatasets', function (req) {
-    // do an incremental update, as we typically start without datasets
-    me.datasets.add(req.data, { merge: true });
-  });
-
-  socket.on('syncDataview', function (req) {
-    me.dataview.reset(req.data);
-  });
-
-  socket.on('syncFacets', function (req) {
-    // do an incremental update, as we typically update only a few properties of a facet
-    // Also, a full reset will orphan the view.model objects in spot-app (ie. crashes)
-    var dataset = me.datasets.get(req.datasetId);
-    dataset.facets.add(req.data, { merge: true });
-
-    me.resetDataview(); // NOTE: the cached (serialized) datasets need to be updated, too
-
-    dataset.trigger('syncFacets');
-  });
-
-  socket.on('newData', function (req) {
-    var filter = me.dataview.filters.get(req.filterId);
-    if (!filter) {
-      // ignore data for filters we do not have (anymore)
-      return;
+  return new Promise(function (resolve, reject) {
+    if (address) {
+      // connect to specified address
+      // necessary for when window.location is not availble (node.js)
+      me.socket = io.connect(address);
+    } else {
+      // Use socket.io fallback to autodetect address
+      // ie. when a website wants to connect, use the window.location
+      me.socket = io.connect();
     }
-    if (req.data) {
-      filter.data = req.data;
 
-      // for text filters, rebuild partition and count
-      filter.partitions.forEach(function (partition, p) {
-        var columnToName = {1: 'a', 2: 'b', 3: 'c', 4: 'd'};
+    me.socket.on('disconnect', function () {
+      console.log('Disconnected from server');
+      me.isConnected = false;
+    });
 
-        if (partition.isText) {
-          partition.groups.reset(null, {silent: true});
-          filter.data.forEach(function (d) {
-            var count = (parseFloat(d.aa) || parseInt(d.count)) || 0;
+    me.socket.on('syncDatasets', function (req) {
+      // do an incremental update, as we typically start without datasets
+      me.datasets.add(req.data, { merge: true });
+      me.datasets.trigger('synced');
+    });
 
-            if (count) {
-              partition.groups.add({
-                min: 0,
-                max: 100,
-                count: count,
-                label: d[columnToName[(p + 1)]],
-                value: d[columnToName[(p + 1)]]
-              }, {silent: true});
-            }
-          });
-          partition.groups.sort();
-        }
-      });
-      filter.trigger('newData');
-    }
+    me.socket.on('syncDataview', function (req) {
+      me.dataview.reset(req.data);
+    });
+
+    me.socket.on('syncFacets', function (req) {
+      // do an incremental update, as we typically update only a few properties of a facet
+      // Also, a full reset will orphan the view.model objects in spot-app (ie. crashes)
+      var dataset = me.datasets.get(req.datasetId);
+      dataset.facets.add(req.data, { merge: true });
+
+      me.resetDataview(); // NOTE: the cached (serialized) datasets need to be updated, too
+
+      dataset.trigger('syncFacets');
+    });
+
+    me.socket.on('newData', function (req) {
+      var filter = me.dataview.filters.get(req.filterId);
+      if (!filter) {
+        // ignore data for filters we do not have (anymore)
+        return;
+      }
+      if (req.data) {
+        filter.data = req.data;
+
+        // for text filters, rebuild partition and count
+        filter.partitions.forEach(function (partition, p) {
+          var columnToName = {1: 'a', 2: 'b', 3: 'c', 4: 'd'};
+
+          if (partition.isText) {
+            partition.groups.reset(null, {silent: true});
+            filter.data.forEach(function (d) {
+              var count = (parseFloat(d.aa) || parseInt(d.count)) || 0;
+
+              if (count) {
+                partition.groups.add({
+                  min: 0,
+                  max: 100,
+                  count: count,
+                  label: d[columnToName[(p + 1)]],
+                  value: d[columnToName[(p + 1)]]
+                }, {silent: true});
+              }
+            });
+            partition.groups.sort();
+          }
+        });
+        filter.trigger('newData');
+      }
+    });
+
+    me.socket.on('newMetaData', function (req) {
+      me.dataview.dataTotal = parseInt(req.dataTotal);
+      me.dataview.dataSelected = parseInt(req.dataSelected);
+      console.timeEnd('Get data');
+      me.dataview.trigger('newMetaData');
+    });
+
+    me.socket.on('connect', function () {
+      console.log('Connected to server');
+      me.isConnected = true;
+      resolve(true);
+    });
   });
-
-  socket.on('newMetaData', function (req) {
-    me.dataview.dataTotal = parseInt(req.dataTotal);
-    me.dataview.dataSelected = parseInt(req.dataSelected);
-    console.timeEnd('Get data');
-    me.dataview.trigger('newMetaData');
-  });
-
-  socket.connect();
-  me.socket = socket;
 }
 
 /**
@@ -136,7 +138,7 @@ function getDatasets () {
   return new Promise(function (resolve, reject) {
     me.socket.emit('getDatasets');
 
-    me.datasets.once('reset', function () {
+    me.datasets.once('synced', function () {
       resolve(me.datasets);
     });
   });
