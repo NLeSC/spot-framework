@@ -1,7 +1,7 @@
 var Collection = require('ampersand-collection');
 var Group = require('./group');
 
-function setOrdering (groups, ordering) {
+function setOrdering (groups, type, ordering) {
   if (ordering === 'count') {
     groups.comparator = function (a, b) {
       if (a.count === b.count) {
@@ -11,7 +11,13 @@ function setOrdering (groups, ordering) {
       }
     };
   } else if (ordering === 'value') {
-    groups.comparator = 'value';
+    if (type === 'categorial') {
+      groups.comparator = 'value';
+    } else {
+      // NOTE: the 'value' field is a string, so sorting 'P10D', 'P7D' results in wrong order
+      // the 'min', and 'max' fields correspond to sortable values
+      groups.comparator = 'min';
+    }
   } else {
     console.error('Ordering not implemented for partition: ', ordering);
   }
@@ -35,10 +41,10 @@ module.exports = Collection.extend({
 
     // this.parent := partition
     if (partition) {
-      setOrdering(groups, partition.ordering);
+      setOrdering(groups, partition.type, partition.ordering);
 
       partition.on('change ordering', function () {
-        setOrdering(groups, partition.ordering);
+        setOrdering(groups, partition.type, partition.ordering);
       });
     }
   }

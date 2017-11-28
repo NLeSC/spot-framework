@@ -106,15 +106,21 @@ function filterFunctionDatetime1D (partition) {
     max = moment(partition.maxval);
 
     return function (d) {
+      if (d === misval) {
+        return false;
+      }
       var m = moment(d);
-      return (m !== misval) && !m.isBefore(min) && !m.isAfter(max);
+      return !m.isBefore(min) && !m.isAfter(max);
     };
   } else {
     min = moment(partition.selected[0]);
     max = moment(partition.selected[1]);
     return function (d) {
+      if (d === misval) {
+        return false;
+      }
       var m = moment(d);
-      return (m !== misval) && !min.isAfter(m) && (m.isBefore(max) || (max.isSame(edge) && max.isSame(m)));
+      return !min.isAfter(m) && (m.isBefore(max) || (max.isSame(edge) && max.isSame(m)));
     };
   }
 }
@@ -137,7 +143,7 @@ function filterFunctionDuration1D (partition) {
         return false;
       }
       var m = moment.duration(d);
-      return moment.isDuration(m) && m >= min && m <= max;
+      return m >= min && m <= max;
     };
   } else {
     min = moment.duration(partition.selected[0]);
@@ -147,7 +153,7 @@ function filterFunctionDuration1D (partition) {
         return false;
       }
       var m = moment.duration(d);
-      return moment.isDuration(m) && m >= min && (m < max || (m <= max && max >= edge));
+      return m >= min && (m < max || (m <= max && max >= edge));
     };
   }
 }

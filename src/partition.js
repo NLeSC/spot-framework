@@ -29,10 +29,16 @@ function setDatetimeGroups (partition, groups) {
 
   var current = moment(timeStart);
   while ((!current.isAfter(timeEnd)) && groups.length < 500) {
+    // make sure the value for this bin is inside the valid range
+    var value = moment(current).tz(timeZone).startOf(timeRes);
+    if (value.isBefore(timeStart)) {
+      value = moment(timeStart);
+    }
+
     groups.add({
       min: moment(current).tz(timeZone).startOf(timeRes),
       max: moment(current).tz(timeZone).endOf(timeRes),
-      value: moment(current).tz(timeZone).startOf(timeRes).format(),
+      value: value.format(),
       label: moment(current).tz(timeZone).startOf(timeRes).format()
     });
     current.add(1, timeRes);
@@ -52,11 +58,16 @@ function setDurationGroups (partition, groups) {
   var current = Math.floor(parseFloat(dStart.as(dRes)));
   var last = Math.floor(parseFloat(dEnd.as(dRes)));
 
-  while (current < last) {
+  while (current <= last) {
+    // make sure the value for this bin is inside the valid range
+    var value = moment.duration(current, dRes);
+    if (value < dStart) {
+      value = dStart;
+    }
     groups.add({
       min: moment.duration(current, dRes),
       max: moment.duration(current + 1, dRes),
-      value: moment.duration(current, dRes).toISOString(),
+      value: value.toISOString(),
       label: moment.duration(current, dRes).toISOString()
     });
 

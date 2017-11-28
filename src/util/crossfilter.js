@@ -421,8 +421,14 @@ function datetimeGroupFn (partition) {
     if (d.isBefore(partition.minval) || d.isAfter(partition.maxval)) {
       return misval;
     }
-    var grouped = moment(d).startOf(timeStep).format();
-    return grouped;
+    // corner case: When grouping, datetimes are rounded down and can end up outside
+    // the valid range (before minval) so group these cases to minval
+    var grouped = moment(d).startOf(timeStep);
+    if (grouped.isBefore(partition.minval)) {
+      return partition.minval.format();
+    } else {
+      return grouped.format();
+    }
   };
 }
 
@@ -431,6 +437,18 @@ function datetimeGroupFn (partition) {
  */
 function durationGroupFn (partition) {
   var timeStep = util.getDurationResolution(partition.minval, partition.maxval);
+
+  // corner case: last bin of a partitioning includes its maximum value,
+  // which could fall on a rounding-barrier. For instance:
+  // minval=0 days, max=28 days, timestep=1 week will group to:
+  // [0,1] '0 weeks', [1,2] '1 week', [2,3] '2 weeks', [3,4] '3 weeks'
+  // but 4 weeks itself should go to '3 weeks'
+  // solve this by subtracting the smallest possible time step (epsilon), and round it
+  var maxAsMilliseconds = partition.maxval.asMilliseconds();
+  var adjustedMax = moment.duration(maxAsMilliseconds - 1, 'milliseconds');
+  adjustedMax = Math.floor(adjustedMax.as(timeStep));
+  var maxGroup = moment.duration(adjustedMax, timeStep).toISOString();
+
   return function (d) {
     if (d === misval) {
       return misval;
@@ -438,8 +456,19 @@ function durationGroupFn (partition) {
     if (d < partition.minval || d > partition.maxval) {
       return misval;
     }
-    var rounded = Math.floor(parseFloat(d.as(timeStep)));
-    return moment.duration(rounded, timeStep).toISOString();
+
+    if (d.asMilliseconds() === maxAsMilliseconds) {
+      return maxGroup;
+    }
+
+    // corner case: When grouping, durations are rounded down and can end up outside
+    // the valid range (before minval) so group these cases to minval
+    var roundedCount = Math.floor(parseFloat(d.as(timeStep)));
+    var roundedMoment = moment.duration(roundedCount, timeStep);
+    if (roundedMoment < partition.minval) {
+      return partition.minval.toISOString();
+    }
+    return roundedMoment.toISOString();
   };
 }
 
