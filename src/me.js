@@ -218,7 +218,7 @@ function toggleDatasetFacets (me, dataset) {
       // default options for all facet types
       var options = {
         name: facet.name,
-        accessor: facet.name,
+        accessor: facet.accessor,
         description: facet.description,
         type: facet.transform.transformedType,
         units: facet.units, // TODO: transformed units?
