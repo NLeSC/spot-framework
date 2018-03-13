@@ -1,7 +1,7 @@
 {
   "name": "spot-framework",
   "license": "Apache-2.0",
-  "version": "0.0.7",
+  "version": "0.1.0",
   "homepage": "https://github.com/NLeSC/spot-framework",
   "description": "Filter and join datasets for interactive visualization",
   "keywords": [
