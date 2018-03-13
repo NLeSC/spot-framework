@@ -3,7 +3,7 @@ var Aggregate = require('../src/aggregate');
 var Dataset = require('../src/dataset');
 var Facet = require('../src/facet');
 var driver = require('../src/driver/client');
-var missing = require('../src/util/misval');
+var misval = require('../src/util/misval');
 var moment = require('moment-timezone');
 var utildx = require('../src/util/crossfilter');
 
@@ -96,19 +96,19 @@ describe('crossfilter utility functions', function () {
 
     it('for facet properties', function () {
       datum = {'a': Infinity};
-      expect(value(datum)).toEqual(missing);
+      expect(value(datum)).toEqual(misval);
 
       datum = {};
-      expect(value(datum)).toEqual(missing);
+      expect(value(datum)).toEqual(misval);
 
       datum = {a: undefined};
-      expect(value(datum)).toEqual(missing);
+      expect(value(datum)).toEqual(misval);
 
       datum = {a: null};
-      expect(value(datum)).toEqual(missing);
+      expect(value(datum)).toEqual(misval);
 
       datum = {a: 'not a number'};
-      expect(value(datum)).toEqual(missing);
+      expect(value(datum)).toEqual(misval);
     });
 
     facet = new Facet({accessor: 'a.b', type: 'continuous'});
@@ -116,35 +116,35 @@ describe('crossfilter utility functions', function () {
 
     it('for nested facet properties', function () {
       datum = {};
-      expect(value(datum)).toEqual(missing);
+      expect(value(datum)).toEqual(misval);
 
       datum = {a: undefined};
-      expect(value(datum)).toEqual(missing);
+      expect(value(datum)).toEqual(misval);
 
       datum = {a: null};
-      expect(value(datum)).toEqual(missing);
+      expect(value(datum)).toEqual(misval);
 
       datum = {a: 'not a number'};
-      expect(value(datum)).toEqual(missing);
+      expect(value(datum)).toEqual(misval);
 
       datum = {'a': {b: undefined}};
-      expect(value(datum)).toEqual(missing);
+      expect(value(datum)).toEqual(misval);
 
       datum = {'a': {b: null}};
-      expect(value(datum)).toEqual(missing);
+      expect(value(datum)).toEqual(misval);
 
       datum = {'a': {b: 'not a number'}};
-      expect(value(datum)).toEqual(missing);
+      expect(value(datum)).toEqual(misval);
     });
 
     facet = new Facet({accessor: 'a', type: 'continuous', misvalAsText: '10, 20, "a", "b"'});
     value = utildx.valueFn(facet);
 
     it('using custom missing values from misvalAsText', function () {
-      expect(value({a: 10})).toEqual(missing);
-      expect(value({a: 20})).toEqual(missing);
-      expect(value({a: 'a'})).toEqual(missing);
-      expect(value({a: 'b'})).toEqual(missing);
+      expect(value({a: 10})).toEqual(misval);
+      expect(value({a: 20})).toEqual(misval);
+      expect(value({a: 'a'})).toEqual(misval);
+      expect(value({a: 'b'})).toEqual(misval);
     });
   });
 
@@ -156,11 +156,11 @@ describe('crossfilter utility functions', function () {
     var value = utildx.valueFn(facet);
 
     it('should give proper values, or missing', function () {
-      expect(value({a: 'a'})).toEqual(missing);
+      expect(value({a: 'a'})).toEqual(misval);
       expect(value({a: 1.0})).toEqual(1.0);
-      expect(value({a: Infinity})).toEqual(missing);
-      expect(value({a: NaN})).toEqual(missing);
-      expect(value({a: null})).toEqual(missing);
+      expect(value({a: Infinity})).toEqual(misval);
+      expect(value({a: NaN})).toEqual(misval);
+      expect(value({a: null})).toEqual(misval);
     });
   });
 
