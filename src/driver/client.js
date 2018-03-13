@@ -131,6 +131,10 @@ function setCategories (dataset, facet) {
     }
   });
 
+  if (Plength >= 75) {
+    console.warn('Too many categories for facet "', facet.name, '" all but the first 75 categories have been dropped.');
+  }
+
   facet.categorialTransform.reset();
 
   Object.keys(p).forEach(function (key) {
