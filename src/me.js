@@ -331,20 +331,20 @@ function toggleDataset (dataset) {
 
       var removePartitions = [];
       filter.partitions.forEach(function (partition) {
-        var facet = this.dataview.facets.get(partition.facetName);
+        var facet = this.dataview.facets.get(partition.facetName, 'name');
         if (!facet) {
           removePartitions.push(partition);
-          console.log('removing partition', partition.facetName);
+          console.log('removing partition', partition.facetName, 'name');
         }
       }, this);
       filter.partitions.remove(removePartitions);
 
       var removeAggregates = [];
       filter.aggregates.forEach(function (aggregate) {
-        var facet = this.dataview.facets.get(aggregate.facetName);
+        var facet = this.dataview.facets.get(aggregate.facetName, 'name');
         if (!facet) {
           removeAggregates.push(aggregate);
-          console.log('removing partition', aggregate.facetName);
+          console.log('removing partition', aggregate.facetName, 'name');
         }
       }, this);
       filter.aggregates.remove(removeAggregates);
