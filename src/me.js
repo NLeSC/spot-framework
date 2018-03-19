@@ -312,6 +312,11 @@ function toggleDatasetData (me, dataset) {
  * @memberof! Spot
  */
 function toggleDataset (dataset) {
+  // clear cached data on each filter
+  this.dataview.filters.forEach(function (filter, i) {
+    filter.data = [];
+  });
+
   if (this.sessionType === 'server') {
     toggleDatasetFacets(this, dataset);
   } else if (this.sessionType === 'client') {
